@@ -1,0 +1,6 @@
+{
+  "repo": "YOUR_GITHUB_USERNAME/YOUR_REPO_NAME",
+  "branch": "main",
+  "use_api": true,
+  "fallback_to_manifest": true
+}
