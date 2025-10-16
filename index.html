@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Your Name — Resume</title>
+
+  <!-- Google font (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0f172a;
+      --primary:#0b74de;
+      --page-width:900px;
+      --print-font-size:11px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg);
+      color:var(--accent);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+
+    /* Container */
+    .resume{
+      width:100%;
+      max-width:var(--page-width);
+      background:var(--card);
+      box-shadow:0 8px 30px rgba(17,24,39,0.08);
+      border-radius:12px;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap:28px;
+      padding:28px;
+    }
+
+    /* Header / top-left column */
+    header{
+      grid-column:1 / span 1;
+      display:flex;
+      align-items:flex-start;
+      gap:18px;
+    }
+
+    .avatar{
+      width:84px;
+      height:84px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--primary),#6c9ef4);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      font-size:26px;
+      flex-shrink:0;
+    }
+    .name-block h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:-0.2px;
+    }
+    .name-block p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+
+    /* Main layout */
+    main{
+      grid-column:1 / span 1;
+      padding-top:12px;
+    }
+    aside{
+      grid-column:2 / span 1;
+      padding:6px 0 6px 10px;
+      border-left:1px dashed rgba(15,23,42,0.06);
+      min-width:220px;
+    }
+
+    /* Sections */
+    section{margin-bottom:18px}
+    h2{
+      margin:0 0 10px 0;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:var(--muted);
+    }
+
+    /* Summary */
+    .summary{font-size:14px;color:var(--accent);line-height:1.45}
+
+    /* Experience */
+    .experience .item{margin-bottom:12px}
+    .item .title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .item h3{margin:0;font-size:15px}
+    .item .meta{font-size:13px;color:var(--muted);margin-top:4px}
+    .item p{margin:8px 0 0 0;font-size:14px;color:#1f2937;line-height:1.4}
+
+    /* Skills (tags) */
+    .skills .tag{display:inline-block;padding:6px 8px;margin:6px 6px 0 0;border-radius:8px;background:#f1f5f9;font-size:13px;color:#0f172a}
+
+    /* Contact / small text */
+    .contact p{margin:8px 0;color:var(--muted);font-size:13px}
+
+    /* Projects / Education compact */
+    .compact-list .line{margin:8px 0;font-size:14px}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Print rules: try to fit on one page */
+    @media print {
+      body{background:white;padding:0}
+      .resume{box-shadow:none;border-radius:0;max-width:100%;grid-template-columns:1fr 300px;padding:18px}
+      body, .resume{font-size:var(--print-font-size)}
+      .avatar{width:64px;height:64px;font-size:20px}
+      h1{font-size:18px}
+      .muted{font-size:11px}
+      .skills .tag{padding:4px 6px;font-size:11px}
+      header, main, aside{break-inside:avoid}
+      /* Avoid page breaks inside experience items */
+      .item{page-break-inside:avoid}
+    }
+
+    /* Responsive: single column on narrow screens */
+    @media (max-width:880px){
+      .resume{grid-template-columns:1fr; padding:20px}
+      aside{border-left:none;border-top:1px dashed rgba(15,23,42,0.06);padding-top:18px}
+      header{flex-direction:row;align-items:center}
+    }
+
+    /* Small helpers */
+    .muted-inline{color:var(--muted);font-size:13px}
+    .right{text-align:right}
+    a{color:var(--primary);text-decoration:none}
+  </style>
+</head>
+
+<body>
+  <article class="resume" role="document" aria-label="Resume">
+    <div style="grid-column:1 / span 1;">
+      <header>
+        <div class="avatar" aria-hidden="true">YN</div>
+        <div class="name-block">
+          <h1>Your Name</h1>
+          <p class="muted">Product Designer · Front-end Engineer · Open to remote/onsite roles</p>
+          <div style="margin-top:10px;">
+            <span class="muted-inline">Location:</span> City, Country ·
+            <span class="muted-inline">Years exp:</span> 6
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <!-- Summary -->
+        <section aria-labelledby="summary-heading">
+          <h2 id="summary-heading">Summary</h2>
+          <div class="summary">
+            Concise 2–3 sentence professional summary. Example: Product-focused engineer with 6 years building responsive web apps and design systems. I specialize in front-end architecture, performance, and cross-functional teamwork.
+          </div>
+        </section>
+
+        <!-- Experience -->
+        <section class="experience" aria-labelledby="experience-heading">
+          <h2 id="experience-heading">Experience</h2>
+
+          <div class="item">
+            <div class="title">
+              <h3>Senior Front-end Engineer — Acme Co.</h3>
+              <div class="muted-inline">2022 — Present · Remote</div>
+            </div>
+            <div class="meta muted">Led a team of 4; shipped design system and reduced bundle size by 28%.</div>
+            <p>Focus: component libraries, accessibility, performance optimizations, mentoring.</p>
+          </div>
+
+          <div class="item">
+            <div class="title">
+              <h3>Front-end Engineer — BrightApps</h3>
+              <div class="muted-inline">2019 — 2022 · Mumbai</div>
+            </div>
+            <div class="meta muted">Built customer-facing dashboards used by 50k+ users monthly.</div>
+            <p>Focus: React, TypeScript, testing, CI/CD, close collaboration with PM and design.</p>
+          </div>
+
+          <!-- Add more items as needed -->
+        </section>
+
+        <!-- Projects -->
+        <section aria-labelledby="projects-heading">
+          <h2 id="projects-heading">Selected Projects</h2>
+          <div class="compact-list">
+            <div class="line"><strong>Design System</strong> — Built a component library (React) consumed by 6 products.</div>
+            <div class="line"><strong>Performance Audit</strong> — Reduced Time to Interactive by 40% on key pages.</div>
+          </div>
+        </section>
+
+        <!-- Education -->
+        <section aria-labelledby="education-heading">
+          <h2 id="education-heading">Education</h2>
+          <div class="compact-list">
+            <div class="line"><strong>B.Tech — Computer Science</strong>, University Name, 2015 — 2019</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Right column -->
+    <aside>
+      <section aria-labelledby="contact-heading" class="contact">
+        <h2 id="contact-heading">Contact</h2>
+        <p><strong>Email:</strong> <a href="mailto:you@example.com">you@example.com</a></p>
+        <p><strong>Phone:</strong> +91 98xxxxxxx</p>
+        <p><strong>Web:</strong> <a href="https://yourdomain.com">yourdomain.com</a></p>
+        <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/yourprofile">linkedin.com/in/yourprofile</a></p>
+        <p><strong>GitHub:</strong> <a href="https://github.com/username">github.com/username</a></p>
+      </section>
+
+      <section aria-labelledby="skills-heading" class="skills">
+        <h2 id="skills-heading">Skills</h2>
+        <div>
+          <span class="tag">HTML</span>
+          <span class="tag">CSS / SASS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">React</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Design Systems</span>
+          <span class="tag">Accessibility</span>
+          <span class="tag">Performance</span>
+        </div>
+      </section>
+
+      <section aria-labelledby="tools-heading">
+        <h2 id="tools-heading">Tools</h2>
+        <div class="muted">Figma · VS Code · Git · Jest · Vite · Chrome DevTools</div>
+      </section>
+
+      <section aria-labelledby="certs-heading">
+        <h2 id="certs-heading">Certifications</h2>
+        <div class="compact-list">
+          <div class="line">Certified Web Accessibility Specialist</div>
+          <div class="line">Advanced React — Course name</div>
+        </div>
+      </section>
+
+      <section aria-labelledby="other-heading">
+        <h2 id="other-heading">Interests</h2>
+        <div class="muted">Open-source · Running · Photography · Mentoring</div>
+      </section>
+    </aside>
+  </article>
+</body>
+</html>
