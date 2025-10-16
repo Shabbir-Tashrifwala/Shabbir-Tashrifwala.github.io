@@ -1,129 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Shabbir Tashrifwala — Portfolio</title>
-  <meta name="description" content="Shabbir Tashrifwala: student and machine learning enthusiast. Projects in ASL fingerspelling and churn prevention with survival analysis.">
-  <link rel="preload" href="assets/style.css" as="style">
-  <link rel="stylesheet" href="assets/style.css">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <meta property="og:title" content="Shabbir Tashrifwala — Portfolio">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://shabbir-tashrifwala.github.io/">
-  <meta property="og:image" content="assets/og.png">
-  <meta property="og:description" content="Grey–noir, simple, fast portfolio & blog.">
+  <meta name="description" content="Portfolio of Shabbir Tashrifwala. Projects, Resume, Blogs, and Contact." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="container inner">
-      <div class="brand">
-        <div class="dot" aria-hidden="true"></div>
-        <h1>Shabbir Tashrifwala</h1>
-      </div>
-      <nav class="nav">
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand"><a href="#home"><strong>Shabbir&nbsp;Tashrifwala</strong></a></div>
+      <div class="menu">
         <a href="#projects">Projects</a>
-        <a href="#blog">Blog</a>
-        <a href="#contact">Contact</a>
-      </nav>
+        <a href="#resume">Resume</a>
+        <a href="#blogs">Blogs</a>
+        <a class="btn cta" href="#contact" role="button">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <header id="home" class="hero route active">
+    <canvas id="code-rain" aria-hidden="true"></canvas>
+    <div class="container content">
+      <div class="kicker">Hello, I'm</div>
+      <h1>Shabbir Tashrifwala</h1>
+      <p><em>[Placeholder one-liner]</em> — a short sentence about who you are and what you do. Replace this with your actual tagline.</p>
+      <div class="actions">
+        <a class="btn" href="#projects">View Projects</a>
+        <a class="btn ghost" href="#resume">See Resume</a>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero" id="about">
-      <div class="card">
-        <h2 class="section" style="margin-top:0">Hi, I'm Shabbir.</h2>
-        <p class="sub">Student from Mumbai exploring <strong>machine learning</strong>, <strong>deep learning</strong>, and <strong>computer vision</strong>. I enjoy building end‑to‑end systems— from notebooks to real‑time apps.</p>
-        <div class="btns">
-          <a class="btn primary" href="assets/resume.pdf" target="_blank" rel="noopener">View Résumé</a>
-          <a class="btn" href="projects/index.html">Projects</a>
-          <a class="btn" href="blog/index.html">Blog</a>
-          <a class="btn" href="mailto:shabbir@tashrifwala.com">Email me</a>
-          <a class="btn" href="https://github.com/Shabbir-Tashrifwala" target="_blank" rel="noopener">GitHub</a>
-        </div>
-        <div class="timeline" style="margin-top:18px">
-          <div class="item"><strong>St. Mary’s ISC</strong> — ISC Standard 12 (Apr 2024 – Present)</div>
-        </div>
+  <section id="projects" class="section route">
+    <div class="container">
+      <div class="heading">
+        <h2>Projects</h2>
+        <div class="sub">A curated selection of recent work. (Placeholders — replace with your own.)</div>
       </div>
-      <div class="card">
-        <h2 class="section" style="margin-top:0">Quick facts</h2>
-        <div class="kv"><strong>Location</strong><div>Mumbai, India</div></div>
-        <div class="kv"><strong>Interests</strong><div>AI/ML, NLP, Computer Vision, Generative Models, Reinforcement Learning</div></div>
-        <div class="kv"><strong>Coursework</strong><div>CS50x; ML & DL Specializations (Andrew Ng); fast.ai</div></div>
-        <div class="kv"><strong>Highlights</strong><div>INAO Stages 1–3; IAIO Training Camp (Top 22); IOAI Training Camp (Top 12); State‑level Karate Silver; Represented India (Intl. Karate)</div></div>
-      </div>
-    </section>
-
-    <section id="skills">
-      <h2 class="section">Skills</h2>
-      <div class="grid cols-3">
-        <div class="card">
-          <h3>Programming</h3>
-          <div class="badges">
-            <span class="badge">C</span><span class="badge">C++ (STL)</span><span class="badge">Java</span><span class="badge">Python</span><span class="badge">JavaScript</span>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Data & ML</h3>
-          <div class="badges">
-            <span class="badge">NumPy</span><span class="badge">pandas</span><span class="badge">scikit‑learn</span><span class="badge">PyTorch</span><span class="badge">OpenCV</span>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Tools</h3>
-          <div class="badges">
-            <span class="badge">Git</span><span class="badge">Unix</span><span class="badge">Jupyter</span><span class="badge">Google Colab</span><span class="badge">HTML/CSS</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="projects">
-      <h2 class="section">Featured Projects</h2>
-      <div class="grid cols-2">
+      <div class="card-grid">
         <article class="card">
-          <h3>ASL Fingerspelling → Text (Real‑time)</h3>
-          <p class="sub">MediaPipe landmarks + Transformer; webcam demo; validation CER ≈ 0.36 in ~3.5 h (2× T4).</p>
-          <div class="badges"><span class="badge">Python</span><span class="badge">MediaPipe</span><span class="badge">PyTorch</span><span class="badge">Computer Vision</span></div>
-          <p style="margin-top:10px"><a href="../projects/asl-fingerspelling.html">Project page</a> · <a href="https://github.com/Shabbir-Tashrifwala/asl-fingerspelling" target="_blank" rel="noopener">Repo</a></p>
+          <h3>Project A — Placeholder</h3>
+          <p>One-line description for a project. Add impact, your role, and notable outcomes.</p>
+          <div class="meta">2025 · Role: Developer/Researcher</div>
         </article>
         <article class="card">
-          <h3>Churn Prevention with Survival Analysis → Next‑Best‑Action</h3>
-          <p class="sub">CoxPH + GBM, campaign scoring at 1/3/6 months, and a real‑time FastAPI endpoint.</p>
-          <div class="badges"><span class="badge">Python</span><span class="badge">scikit‑learn</span><span class="badge">scikit‑survival</span><span class="badge">FastAPI</span></div>
-          <p style="margin-top:10px"><a href="../projects/churn-prevention.html">Project page</a> · <a href="https://github.com/Shabbir-Tashrifwala/churn-prevention-survival-nba" target="_blank" rel="noopener">Repo</a></p>
+          <h3>Project B — Placeholder</h3>
+          <p>Short summary and a link to details or a case study page.</p>
+          <div class="meta">2025 · Role: Engineer</div>
+        </article>
+        <article class="card">
+          <h3>Project C — Placeholder</h3>
+          <p>Describe the problem you solved and the measurable result.</p>
+          <div class="meta">2024 · Role: Lead</div>
+        </article>
+        <article class="card">
+          <h3>Project D — Placeholder</h3>
+          <p>Another project. Keep all cards concise and consistent.</p>
+          <div class="meta">2024 · Role: Research</div>
+        </article>
+        <article class="card">
+          <h3>Project E — Placeholder</h3>
+          <p>Optional: link out to GitHub or a live demo.</p>
+          <div class="meta">2023 · Role: Builder</div>
+        </article>
+        <article class="card">
+          <h3>Project F — Placeholder</h3>
+          <p>Replace with your real work. Imagery can be added later.</p>
+          <div class="meta">2023 · Role: Contributor</div>
         </article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="blog">
-      <h2 class="section">Blog</h2>
-      <div class="card postlist">
-        <div class="post">
-          <a href="blog/demo-post.html">Demo post: Building a grey‑noir portfolio with vanilla HTML/CSS</a>
-          <div class="sub">A short starter article you can replace later.</div>
+  <section id="resume" class="section route">
+    <div class="container">
+      <div class="heading">
+        <h2>Resume</h2>
+        <div class="sub">PDF placeholder. Swap in your actual resume file when deploying.</div>
+      </div>
+      <div class="card" style="grid-column: span 12;">
+        <p class="muted">Preview suppressed in this inline demo. When deployed, embed your PDF or link to it.</p>
+        <p><a class="btn" href="assets/Shabbir_Tashrifwala_Resume.pdf" download>Download Resume (Placeholder)</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="blogs" class="section route">
+    <div class="container">
+      <div class="heading">
+        <h2>Blogs</h2>
+        <div class="sub">Write-ups and notes. Link these to your real posts later.</div>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Blog Post Title — Placeholder</h3>
+          <p>One-liner about the post. <em>(Link coming soon)</em></p>
+          <div class="meta">Oct 2025</div>
+        </article>
+        <article class="card">
+          <h3>Another Post — Placeholder</h3>
+          <p>Short teaser. Keep it snappy and clear.</p>
+          <div class="meta">Sep 2025</div>
+        </article>
+        <article class="card">
+          <h3>A Longer Essay — Placeholder</h3>
+          <p>Use this to showcase depth. Replace with your content.</p>
+          <div class="meta">Aug 2025</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section route">
+    <div class="container">
+      <div class="heading">
+        <h2>Contact</h2>
+        <div class="sub">Reach out for collaborations or opportunities.</div>
+      </div>
+      <div class="contact">
+        <div class="panel">
+          <form id="contact-form">
+            <label for="name">Name</label>
+            <input id="name" name="name" placeholder="Your name" required />
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Write your message..." required></textarea>
+            <p class="muted">This is a placeholder form. Connect it to a service (Formspree/Netlify) to receive messages.</p>
+            <button class="btn" type="submit">Send Message</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Elsewhere</h3>
+          <p class="muted">Add your links here later (GitHub, X, etc.). For now: <br>
+            <a class="btn ghost" href="mailto:placeholder@example.com">Email Me</a>
+          </p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="contact">
-      <h2 class="section">Contact</h2>
-      <div class="card">
-        <p>Open to collaborations and mentoring. The fastest way to reach me is email.</p>
-        <div class="btns">
-          <a class="btn primary" href="mailto:shabbir@tashrifwala.com">shabbir@tashrifwala.com</a>
-          <span class="btn kbd">+91 9137433985</span>
-        </div>
-      </div>
-    </section>
+  <footer class="footer">
+    <div class="container">
+      © <span id="year"></span> Shabbir Tashrifwala · Built with clean HTML/CSS/JS.
+    </div>
+  </footer>
 
-    <footer class="footer">
-      <div class="sub">© 2025 Shabbir Tashrifwala — Built with a minimal dark theme. Hosted on GitHub Pages.</div>
-    </footer>
-  </main>
-
-  <script src="assets/app.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>

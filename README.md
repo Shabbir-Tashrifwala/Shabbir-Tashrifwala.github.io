@@ -1,20 +1,21 @@
-# Shabbir — Portfolio
+# Shabbir Tashrifwala — Portfolio (Multi-file Export)
 
-A minimalist grey‑noir portfolio built with pure HTML/CSS/JS, optimized for **GitHub Pages**.
+This ZIP matches the exact preview (look & behavior), split into clean files for GitHub Pages.
 
-## Quick deploy
-1. Create a repository named `<username>.github.io` (you already have one).
-2. Upload the contents of this zip at the repo root.
-3. Enable Pages (if needed): Settings → Pages → Branch: `main`.
-4. Visit `https://<username>.github.io` after a minute.
+## Files
+- `index.html` — markup
+- `styles.css` — theme + layout (warm light palette)
+- `script.js` — code-rain background + hash router + form placeholder
+- `assets/favicon.png` — tiny placeholder favicon
+- `assets/Shabbir_Tashrifwala_Resume.pdf` — placeholder resume
 
-## Structure
-- `index.html` — home
-- `projects/` — per‑project detail pages
-- `blog/` — simple blog with static posts
-- `assets/style.css` — one theme file (grey/black), easy to tweak
-- `assets/app.js` — small behavior sugar
-- `assets/resume.pdf` — your résumé
+## Deploy on GitHub Pages
+1. Create a repo (e.g. `shabbirtashrifwala.github.io`) or any repo you prefer.
+2. Upload all files/folders to the **root** of the repo.
+3. In **Settings → Pages**, set **Source** to your `main` branch and **Folder** to `/ (root)`.
+4. Visit your Pages URL once it builds.
 
-## Editing
-Search for text and replace in place. No build tools required.
+## Customize
+- Update hero tagline, project cards, blog items, and contact email right in the HTML.
+- Replace the placeholder resume PDF at `assets/Shabbir_Tashrifwala_Resume.pdf`.
+- To wire the contact form: add Formspree/Netlify endpoint to the `<form>`.
