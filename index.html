@@ -1,264 +1,129 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Your Name — Resume</title>
-
-  <!-- Google font (optional) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent:#0f172a;
-      --primary:#0b74de;
-      --page-width:900px;
-      --print-font-size:11px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--bg);
-      color:var(--accent);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:28px;
-    }
-
-    /* Container */
-    .resume{
-      width:100%;
-      max-width:var(--page-width);
-      background:var(--card);
-      box-shadow:0 8px 30px rgba(17,24,39,0.08);
-      border-radius:12px;
-      overflow:hidden;
-      display:grid;
-      grid-template-columns: 1fr 320px;
-      gap:28px;
-      padding:28px;
-    }
-
-    /* Header / top-left column */
-    header{
-      grid-column:1 / span 1;
-      display:flex;
-      align-items:flex-start;
-      gap:18px;
-    }
-
-    .avatar{
-      width:84px;
-      height:84px;
-      border-radius:12px;
-      background:linear-gradient(135deg,var(--primary),#6c9ef4);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:white;
-      font-weight:700;
-      font-size:26px;
-      flex-shrink:0;
-    }
-    .name-block h1{
-      margin:0;
-      font-size:22px;
-      letter-spacing:-0.2px;
-    }
-    .name-block p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
-
-    /* Main layout */
-    main{
-      grid-column:1 / span 1;
-      padding-top:12px;
-    }
-    aside{
-      grid-column:2 / span 1;
-      padding:6px 0 6px 10px;
-      border-left:1px dashed rgba(15,23,42,0.06);
-      min-width:220px;
-    }
-
-    /* Sections */
-    section{margin-bottom:18px}
-    h2{
-      margin:0 0 10px 0;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:1px;
-      color:var(--muted);
-    }
-
-    /* Summary */
-    .summary{font-size:14px;color:var(--accent);line-height:1.45}
-
-    /* Experience */
-    .experience .item{margin-bottom:12px}
-    .item .title{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-    .item h3{margin:0;font-size:15px}
-    .item .meta{font-size:13px;color:var(--muted);margin-top:4px}
-    .item p{margin:8px 0 0 0;font-size:14px;color:#1f2937;line-height:1.4}
-
-    /* Skills (tags) */
-    .skills .tag{display:inline-block;padding:6px 8px;margin:6px 6px 0 0;border-radius:8px;background:#f1f5f9;font-size:13px;color:#0f172a}
-
-    /* Contact / small text */
-    .contact p{margin:8px 0;color:var(--muted);font-size:13px}
-
-    /* Projects / Education compact */
-    .compact-list .line{margin:8px 0;font-size:14px}
-    .muted{color:var(--muted);font-size:13px}
-
-    /* Print rules: try to fit on one page */
-    @media print {
-      body{background:white;padding:0}
-      .resume{box-shadow:none;border-radius:0;max-width:100%;grid-template-columns:1fr 300px;padding:18px}
-      body, .resume{font-size:var(--print-font-size)}
-      .avatar{width:64px;height:64px;font-size:20px}
-      h1{font-size:18px}
-      .muted{font-size:11px}
-      .skills .tag{padding:4px 6px;font-size:11px}
-      header, main, aside{break-inside:avoid}
-      /* Avoid page breaks inside experience items */
-      .item{page-break-inside:avoid}
-    }
-
-    /* Responsive: single column on narrow screens */
-    @media (max-width:880px){
-      .resume{grid-template-columns:1fr; padding:20px}
-      aside{border-left:none;border-top:1px dashed rgba(15,23,42,0.06);padding-top:18px}
-      header{flex-direction:row;align-items:center}
-    }
-
-    /* Small helpers */
-    .muted-inline{color:var(--muted);font-size:13px}
-    .right{text-align:right}
-    a{color:var(--primary);text-decoration:none}
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shabbir Tashrifwala — Portfolio</title>
+  <meta name="description" content="Shabbir Tashrifwala: student and machine learning enthusiast. Projects in ASL fingerspelling and churn prevention with survival analysis.">
+  <link rel="preload" href="assets/style.css" as="style">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Shabbir Tashrifwala — Portfolio">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shabbir-tashrifwala.github.io/">
+  <meta property="og:image" content="assets/og.png">
+  <meta property="og:description" content="Grey–noir, simple, fast portfolio & blog.">
 </head>
-
 <body>
-  <article class="resume" role="document" aria-label="Resume">
-    <div style="grid-column:1 / span 1;">
-      <header>
-        <div class="avatar" aria-hidden="true">YN</div>
-        <div class="name-block">
-          <h1>Your Name</h1>
-          <p class="muted">Product Designer · Front-end Engineer · Open to remote/onsite roles</p>
-          <div style="margin-top:10px;">
-            <span class="muted-inline">Location:</span> City, Country ·
-            <span class="muted-inline">Years exp:</span> 6
-          </div>
-        </div>
-      </header>
-
-      <main>
-        <!-- Summary -->
-        <section aria-labelledby="summary-heading">
-          <h2 id="summary-heading">Summary</h2>
-          <div class="summary">
-            Concise 2–3 sentence professional summary. Example: Product-focused engineer with 6 years building responsive web apps and design systems. I specialize in front-end architecture, performance, and cross-functional teamwork.
-          </div>
-        </section>
-
-        <!-- Experience -->
-        <section class="experience" aria-labelledby="experience-heading">
-          <h2 id="experience-heading">Experience</h2>
-
-          <div class="item">
-            <div class="title">
-              <h3>Senior Front-end Engineer — Acme Co.</h3>
-              <div class="muted-inline">2022 — Present · Remote</div>
-            </div>
-            <div class="meta muted">Led a team of 4; shipped design system and reduced bundle size by 28%.</div>
-            <p>Focus: component libraries, accessibility, performance optimizations, mentoring.</p>
-          </div>
-
-          <div class="item">
-            <div class="title">
-              <h3>Front-end Engineer — BrightApps</h3>
-              <div class="muted-inline">2019 — 2022 · Mumbai</div>
-            </div>
-            <div class="meta muted">Built customer-facing dashboards used by 50k+ users monthly.</div>
-            <p>Focus: React, TypeScript, testing, CI/CD, close collaboration with PM and design.</p>
-          </div>
-
-          <!-- Add more items as needed -->
-        </section>
-
-        <!-- Projects -->
-        <section aria-labelledby="projects-heading">
-          <h2 id="projects-heading">Selected Projects</h2>
-          <div class="compact-list">
-            <div class="line"><strong>Design System</strong> — Built a component library (React) consumed by 6 products.</div>
-            <div class="line"><strong>Performance Audit</strong> — Reduced Time to Interactive by 40% on key pages.</div>
-          </div>
-        </section>
-
-        <!-- Education -->
-        <section aria-labelledby="education-heading">
-          <h2 id="education-heading">Education</h2>
-          <div class="compact-list">
-            <div class="line"><strong>B.Tech — Computer Science</strong>, University Name, 2015 — 2019</div>
-          </div>
-        </section>
-      </main>
+  <header class="header">
+    <div class="container inner">
+      <div class="brand">
+        <div class="dot" aria-hidden="true"></div>
+        <h1>Shabbir Tashrifwala</h1>
+      </div>
+      <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- Right column -->
-    <aside>
-      <section aria-labelledby="contact-heading" class="contact">
-        <h2 id="contact-heading">Contact</h2>
-        <p><strong>Email:</strong> <a href="mailto:you@example.com">you@example.com</a></p>
-        <p><strong>Phone:</strong> +91 98xxxxxxx</p>
-        <p><strong>Web:</strong> <a href="https://yourdomain.com">yourdomain.com</a></p>
-        <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/yourprofile">linkedin.com/in/yourprofile</a></p>
-        <p><strong>GitHub:</strong> <a href="https://github.com/username">github.com/username</a></p>
-      </section>
-
-      <section aria-labelledby="skills-heading" class="skills">
-        <h2 id="skills-heading">Skills</h2>
-        <div>
-          <span class="tag">HTML</span>
-          <span class="tag">CSS / SASS</span>
-          <span class="tag">JavaScript</span>
-          <span class="tag">React</span>
-          <span class="tag">TypeScript</span>
-          <span class="tag">Design Systems</span>
-          <span class="tag">Accessibility</span>
-          <span class="tag">Performance</span>
+  <main class="container">
+    <section class="hero" id="about">
+      <div class="card">
+        <h2 class="section" style="margin-top:0">Hi, I'm Shabbir.</h2>
+        <p class="sub">Student from Mumbai exploring <strong>machine learning</strong>, <strong>deep learning</strong>, and <strong>computer vision</strong>. I enjoy building end‑to‑end systems— from notebooks to real‑time apps.</p>
+        <div class="btns">
+          <a class="btn primary" href="assets/resume.pdf" target="_blank" rel="noopener">View Résumé</a>
+          <a class="btn" href="projects/index.html">Projects</a>
+          <a class="btn" href="blog/index.html">Blog</a>
+          <a class="btn" href="mailto:shabbir@tashrifwala.com">Email me</a>
+          <a class="btn" href="https://github.com/Shabbir-Tashrifwala" target="_blank" rel="noopener">GitHub</a>
         </div>
-      </section>
-
-      <section aria-labelledby="tools-heading">
-        <h2 id="tools-heading">Tools</h2>
-        <div class="muted">Figma · VS Code · Git · Jest · Vite · Chrome DevTools</div>
-      </section>
-
-      <section aria-labelledby="certs-heading">
-        <h2 id="certs-heading">Certifications</h2>
-        <div class="compact-list">
-          <div class="line">Certified Web Accessibility Specialist</div>
-          <div class="line">Advanced React — Course name</div>
+        <div class="timeline" style="margin-top:18px">
+          <div class="item"><strong>St. Mary’s ISC</strong> — ISC Standard 12 (Apr 2024 – Present)</div>
         </div>
-      </section>
+      </div>
+      <div class="card">
+        <h2 class="section" style="margin-top:0">Quick facts</h2>
+        <div class="kv"><strong>Location</strong><div>Mumbai, India</div></div>
+        <div class="kv"><strong>Interests</strong><div>AI/ML, NLP, Computer Vision, Generative Models, Reinforcement Learning</div></div>
+        <div class="kv"><strong>Coursework</strong><div>CS50x; ML & DL Specializations (Andrew Ng); fast.ai</div></div>
+        <div class="kv"><strong>Highlights</strong><div>INAO Stages 1–3; IAIO Training Camp (Top 22); IOAI Training Camp (Top 12); State‑level Karate Silver; Represented India (Intl. Karate)</div></div>
+      </div>
+    </section>
 
-      <section aria-labelledby="other-heading">
-        <h2 id="other-heading">Interests</h2>
-        <div class="muted">Open-source · Running · Photography · Mentoring</div>
-      </section>
-    </aside>
-  </article>
+    <section id="skills">
+      <h2 class="section">Skills</h2>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3>Programming</h3>
+          <div class="badges">
+            <span class="badge">C</span><span class="badge">C++ (STL)</span><span class="badge">Java</span><span class="badge">Python</span><span class="badge">JavaScript</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Data & ML</h3>
+          <div class="badges">
+            <span class="badge">NumPy</span><span class="badge">pandas</span><span class="badge">scikit‑learn</span><span class="badge">PyTorch</span><span class="badge">OpenCV</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Tools</h3>
+          <div class="badges">
+            <span class="badge">Git</span><span class="badge">Unix</span><span class="badge">Jupyter</span><span class="badge">Google Colab</span><span class="badge">HTML/CSS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2 class="section">Featured Projects</h2>
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>ASL Fingerspelling → Text (Real‑time)</h3>
+          <p class="sub">MediaPipe landmarks + Transformer; webcam demo; validation CER ≈ 0.36 in ~3.5 h (2× T4).</p>
+          <div class="badges"><span class="badge">Python</span><span class="badge">MediaPipe</span><span class="badge">PyTorch</span><span class="badge">Computer Vision</span></div>
+          <p style="margin-top:10px"><a href="../projects/asl-fingerspelling.html">Project page</a> · <a href="https://github.com/Shabbir-Tashrifwala/asl-fingerspelling" target="_blank" rel="noopener">Repo</a></p>
+        </article>
+        <article class="card">
+          <h3>Churn Prevention with Survival Analysis → Next‑Best‑Action</h3>
+          <p class="sub">CoxPH + GBM, campaign scoring at 1/3/6 months, and a real‑time FastAPI endpoint.</p>
+          <div class="badges"><span class="badge">Python</span><span class="badge">scikit‑learn</span><span class="badge">scikit‑survival</span><span class="badge">FastAPI</span></div>
+          <p style="margin-top:10px"><a href="../projects/churn-prevention.html">Project page</a> · <a href="https://github.com/Shabbir-Tashrifwala/churn-prevention-survival-nba" target="_blank" rel="noopener">Repo</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="blog">
+      <h2 class="section">Blog</h2>
+      <div class="card postlist">
+        <div class="post">
+          <a href="blog/demo-post.html">Demo post: Building a grey‑noir portfolio with vanilla HTML/CSS</a>
+          <div class="sub">A short starter article you can replace later.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 class="section">Contact</h2>
+      <div class="card">
+        <p>Open to collaborations and mentoring. The fastest way to reach me is email.</p>
+        <div class="btns">
+          <a class="btn primary" href="mailto:shabbir@tashrifwala.com">shabbir@tashrifwala.com</a>
+          <span class="btn kbd">+91 9137433985</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="sub">© 2025 Shabbir Tashrifwala — Built with a minimal dark theme. Hosted on GitHub Pages.</div>
+    </footer>
+  </main>
+
+  <script src="assets/app.js" defer></script>
 </body>
 </html>

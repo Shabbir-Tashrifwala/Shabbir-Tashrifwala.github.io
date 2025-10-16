@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Churn Prevention (Survival → NBA) — Project</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="header"><div class="container inner">
+  <div class="brand"><div class="dot"></div><h1>Projects</h1></div>
+  <nav class="nav"><a href="../index.html#projects">← Back</a></nav>
+</div></header>
+<main class="container">
+  <article class="card">
+    <h2 class="section" style="margin-top:0">Churn Prevention with Survival Analysis → Next‑Best‑Action</h2>
+    <p class="sub">End‑to‑end project that models time‑to‑churn with CoxPH + GBM, evaluates with C‑index and time‑dependent Brier, and translates risk × value into a pragmatic Next‑Best‑Action matrix. Includes batch scoring and a FastAPI service.</p>
+    <div class="badges"><span class="badge">Python</span><span class="badge">scikit‑survival</span><span class="badge">scikit‑learn</span><span class="badge">FastAPI</span><span class="badge">Docker</span></div>
+    <p>Highlights:</p>
+    <ul>
+      <li>Kaplan–Meier curves & log‑rank tests for key segments.</li>
+      <li>Ready‑to‑run pipeline (<code>models/survival_pipeline.joblib</code>) and batch scorer (<code>score_batch.py</code>).</li>
+      <li>Real‑time API at <code>/predict</code> with FastAPI.</li>
+      <li>Risk×Value segmentation to drive NBA with control holdouts.</li>
+    </ul>
+    <p><a class="btn" href="https://github.com/Shabbir-Tashrifwala/churn-prevention-survival-nba" target="_blank" rel="noopener">GitHub Repository</a></p>
+  </article>
+</main>
+</body></html>

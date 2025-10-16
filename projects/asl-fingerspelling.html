@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASL Fingerspelling → Text — Project</title>
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="header"><div class="container inner">
+  <div class="brand"><div class="dot"></div><h1>Projects</h1></div>
+  <nav class="nav"><a href="../index.html#projects">← Back</a></nav>
+</div></header>
+<main class="container">
+  <article class="card">
+    <h2 class="section" style="margin-top:0">ASL Fingerspelling → Text (Real‑time)</h2>
+    <p class="sub">Real-time American Sign Language (ASL) fingerspelling recognition that streams webcam video, extracts landmarks with MediaPipe, and decodes character sequences with a Transformer encoder–decoder.</p>
+    <div class="badges"><span class="badge">Python</span><span class="badge">MediaPipe</span><span class="badge">PyTorch</span><span class="badge">Computer Vision</span></div>
+    <p>Highlights:</p>
+    <ul>
+      <li>Landmarks (pose + both hands) → strict 144‑feature vector per frame.</li>
+      <li>Robust normalization and interpolation without dropping samples.</li>
+      <li>Transformer encoder–decoder with temporal smoothing for stable streaming text.</li>
+      <li>Validation CER ≈ 0.36 in ~3.5 hours on 2× T4.</li>
+    </ul>
+    <p><a class="btn" href="https://github.com/Shabbir-Tashrifwala/asl-fingerspelling" target="_blank" rel="noopener">GitHub Repository</a></p>
+  </article>
+</main>
+</body></html>
