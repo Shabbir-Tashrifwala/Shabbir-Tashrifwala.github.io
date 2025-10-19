@@ -62,12 +62,49 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
-  // ===== Contact form placeholder =====
+  // ===== Contact form submission =====
   const form = document.getElementById('contact-form');
+  const statusMessage = document.getElementById('contact-form-status');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      alert('Thanks! This is a placeholder form. Connect to Formspree/Netlify to receive messages.');
+      if (statusMessage) {
+        statusMessage.textContent = 'Sending…';
+        statusMessage.classList.remove('error', 'success');
+      }
+      try {
+        const response = await fetch(form.action, {
+          method: form.method || 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (response.ok) {
+          form.reset();
+          if (statusMessage) {
+            statusMessage.textContent = 'Thanks! Your message has been sent.';
+            statusMessage.classList.add('success');
+          }
+        } else {
+          let errorMessage = 'Oops! There was a problem submitting your form.';
+          try {
+            const data = await response.json();
+            if (data?.errors && Array.isArray(data.errors)) {
+              errorMessage = data.errors.map((error) => error.message).join(', ');
+            }
+          } catch (_) {
+            // ignore JSON parse errors and keep default message
+          }
+          if (statusMessage) {
+            statusMessage.textContent = errorMessage;
+            statusMessage.classList.add('error');
+          }
+        }
+      } catch (err) {
+        if (statusMessage) {
+          statusMessage.textContent = 'Unable to send message right now. Please try again later.';
+          statusMessage.classList.add('error');
+        }
+      }
     });
   }
   document.getElementById('year').textContent = new Date().getFullYear();
