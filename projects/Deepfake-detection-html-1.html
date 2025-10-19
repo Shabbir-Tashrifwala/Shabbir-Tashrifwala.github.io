@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Adversarially Robust Deepfake Detection — Product Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A compact, adversarially hardened deepfake detector built with a hybrid EfficientNet plus Vision Transformer architecture and a dual-attacker training protocol." />
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#121822;
+      --ink:#eaf2ff;
+      --muted:#a9b7d0;
+      --accent:#5cc8ff;
+      --accent-2:#7ef0c8;
+      --code:#0f1722;
+      --ok:#36d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --chip:#1a2331;
+      --ring: rgba(124, 230, 255, 0.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,#0b0f14 0%,#0d131c 100%);
+      color:var(--ink); font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(1.2) blur(10px);
+      background:linear-gradient(180deg, rgba(11,15,20,0.85), rgba(11,15,20,0.35));
+      border-bottom:1px solid rgba(124,230,255,0.08)
+    }
+    .header-inner{display:flex; align-items:center; gap:16px; padding:12px 24px; max-width:1100px; margin:0 auto}
+    .logo{
+      display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink)
+    }
+    .logo-mark{
+      width:36px; height:36px; border-radius:10px; background:conic-gradient(from 180deg, var(--accent), var(--accent-2));
+      box-shadow:0 0 0 6px var(--ring), 0 10px 30px rgba(124,230,255,0.25);
+    }
+    .logo h1{font-size:18px; margin:0}
+    .pill{
+      border:1px solid rgba(124,230,255,0.2);
+      background:var(--chip);
+      color:var(--ink); padding:8px 14px; border-radius:1000px; text-decoration:none; font-weight:600;
+      display:inline-flex; align-items:center; gap:10px; transition:transform .05s ease, box-shadow .2s ease;
+      box-shadow:0 8px 24px rgba(92,200,255,0.15);
+    }
+    .pill:hover{transform:translateY(-1px); box-shadow:0 10px 28px rgba(92,200,255,0.25)}
+    .pill small{opacity:.85}
+    main{padding:24px}
+    .hero{display:grid; gap:18px; padding:24px; background:linear-gradient(180deg,#0e1420, #0e1622);
+      border:1px solid rgba(124,230,255,0.08); border-radius:18px}
+    .synopsis{background:var(--card); border:1px solid rgba(124,230,255,0.08); border-radius:16px; padding:22px}
+    .synopsis h2{margin:0 0 10px 0}
+    .grid{display:grid; gap:18px}
+    @media(min-width:980px){ .grid{grid-template-columns: 280px 1fr} }
+    nav.toc{
+      position:sticky; top:76px; align-self:start; background:var(--card); border:1px solid rgba(124,230,255,0.08); border-radius:14px; padding:14px;
+    }
+    nav.toc h3{margin:6px 6px 10px 6px; font-size:13px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase}
+    nav.toc a{
+      display:block; color:var(--ink); text-decoration:none; padding:8px 10px; border-radius:10px; font-size:14px;
+    }
+    nav.toc a:hover{background:#172132}
+    section{background:var(--card); border:1px solid rgba(124,230,255,0.08); border-radius:16px; padding:22px}
+    h2{margin:0 0 12px; font-size:24px}
+    h3{margin:16px 0 8px; font-size:18px}
+    p{margin:10px 0}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{background:var(--chip); border:1px solid rgba(124,230,255,0.12); padding:6px 10px; border-radius:999px; font-size:13px; color:var(--muted)}
+    .stat-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:6px}
+    .stat{flex:1 1 160px; background:#0f1724; border:1px solid rgba(124,230,255,0.12); padding:12px 14px; border-radius:12px}
+    .stat .k{font-size:22px; font-weight:700}
+    .stat .k.ok{color:var(--ok)} .stat .k.warn{color:var(--warn)} .stat .k.bad{color:var(--bad)}
+    .callout{padding:12px 14px; border-left:4px solid var(--accent); background:#0f1722; border-radius:10px}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-size:13px; background:var(--code); padding:2px 6px; border-radius:6px}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; margin:10px 0}
+    thead th{background:#0f1724; color:var(--muted); font-weight:600; text-align:left; padding:10px; border-bottom:1px solid rgba(124,230,255,0.12)}
+    tbody td{padding:10px; border-bottom:1px solid rgba(124,230,255,0.08)}
+    tbody tr:hover td{background:#101a2a}
+    footer{color:var(--muted); text-align:center; padding:36px 0}
+    a{color:var(--accent)}
+    .small{font-size:13px; color:var(--muted)}
+    .badge{display:inline-flex; align-items:center; gap:8px; background:#0f1826; padding:8px 12px; border-radius:12px; border:1px solid rgba(124,230,255,0.12)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="#">
+        <div class="logo-mark" aria-hidden="true"></div>
+        <h1>Adversarially Robust Deepfake Detection</h1>
+      </a>
+      <div style="flex:1"></div>
+      <!-- Download button appears before the synopsis in the visual flow -->
+      <a class="pill" href="Adversarially Robust Deepfake Detection-FINAL.pdf" download>
+        ⬇️ Download the full report
+        <small>(PDF)</small>
+      </a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="synopsis" id="synopsis">
+      <h2>Synopsis</h2>
+      <p>
+        This product delivers a compact deepfake detector that stays reliable under adversarial manipulation. It combines an EfficientNet backbone with a small Vision Transformer head, then hardens the model with a dual attacker training loop. One attacker is the classic PGD noise generator. The other is a tiny U-Net that learns to craft subtle, realistic perturbations shaped by total variation and frequency losses. We train on FaceForensics++ crops and evaluate cross-dataset on Celeb-DF v2. On clean data the robust model matches the baseline. Under combined learned attack plus compression it achieves a higher TPR at 1 percent FPR, which matters in high precision use cases. Grad-CAM analyses show the robust model attends to broader facial cues, not only razor thin edges, which aligns with its improved resilience.
+      </p>
+      <div class="chips" aria-label="Key tags">
+        <span class="chip">EfficientNet + ViT</span>
+        <span class="chip">PGD + Learned U-Net attacker</span>
+        <span class="chip">TV and frequency constraints</span>
+        <span class="chip">FaceForensics++ train</span>
+        <span class="chip">Celeb-DF v2 test</span>
+        <span class="chip">Grad-CAM explainability</span>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="small">Cross-domain AUC (clean)</div>
+          <div class="k">~0.676</div>
+          <div class="small">Robust matches baseline on Celeb-DF v2</div>
+        </div>
+        <div class="stat">
+          <div class="small">TPR at 1% FPR, U-Net + JPEG</div>
+          <div class="k ok">2.9%</div>
+          <div class="small">Baseline 2.0% on the same setup</div>
+        </div>
+        <div class="stat">
+          <div class="small">TPR at 1% FPR, U-Net + H.264-like</div>
+          <div class="k ok">3.0%</div>
+          <div class="small">Baseline 2.5% on the same setup</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:18px">
+      <nav class="toc" aria-label="Table of contents">
+        <h3>Contents</h3>
+        <a href="#problem">1. Problem the product solves</a>
+        <a href="#solution">2. Solution overview</a>
+        <a href="#architecture">3. Architecture</a>
+        <a href="#attackers">4. Adversarial training</a>
+        <a href="#data">5. Data pipeline and setup</a>
+        <a href="#evaluation">6. Evaluation protocol</a>
+        <a href="#results">7. Results at a glance</a>
+        <a href="#explain">8. Explainability insights</a>
+        <a href="#limits">9. Limits and future work</a>
+        <a href="#adoption">10. Adoption and usage</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="content">
+        <section id="problem">
+          <h2>1. Problem the product solves</h2>
+          <p>
+            Deepfake media is now highly realistic. Detectors trained only for accuracy on clean benchmarks can fail when an attacker adds tiny, crafted perturbations or when common compressions wash away local artifacts. This product focuses on resilience. The aim is to keep detection performance usable even when inputs are manipulated to evade the model or passed through lossy compression.
+          </p>
+          <div class="callout">
+            The north star metric is recall at very low false positive rates. We target higher TPR at 1 percent FPR under realistic attack plus compression.
+          </div>
+        </section>
+
+        <section id="solution">
+          <h2>2. Solution overview</h2>
+          <p>
+            We harden a compact hybrid detector through a game between the model and two complementary attackers. The network faces PGD noise and a learned U-Net attacker that produces realistic, spatially smooth, compression-resilient patterns. The U-Net is leashed by total variation loss to reduce high frequency speckle and by a frequency domain loss that discourages very low frequency energy. The result is an attacker that searches mid to high frequency space and forces the detector to learn more stable cues.
+          </p>
+          <div class="chips">
+            <span class="chip">Compact model</span>
+            <span class="chip">Dual attacker training</span>
+            <span class="chip">Compression aware robustness</span>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <h2>3. Architecture</h2>
+          <h3>3.1 EfficientViT detector</h3>
+          <p>
+            The backbone is EfficientNet-B0 used as a feature extractor that outputs a 7 by 7 by 1280 map for a 224 by 224 face crop. We reshape this grid into 49 tokens, prepend a CLS token, add learnable positions, and pass the sequence through a small Transformer encoder with 4 layers and 4 heads. The CLS output goes into a light MLP head for binary classification.
+          </p>
+          <div class="chips">
+            <span class="chip">EfficientNet-B0 features</span>
+            <span class="chip">ViT encoder, 4 layers</span>
+            <span class="chip">MLP head</span>
+          </div>
+          <h3>3.2 Why hybrid</h3>
+          <p>
+            CNNs capture local texture tells like edge inconsistencies. Transformers capture long range relations like lighting agreement between forehead and jaw. Together they cover both local and global cues with a small parameter budget.
+          </p>
+        </section>
+
+        <section id="attackers">
+          <h2>4. Adversarial training</h2>
+          <h3>4.1 PGD attacker</h3>
+          <p>
+            We use L-infinity PGD with epsilon 8 over 255, step 2 over 255, and 10 iterations. Random start is included. This gives a strong baseline adversary that finds harmful pixel level changes.
+          </p>
+          <h3>4.2 Learned U-Net attacker</h3>
+          <p>
+            A tiny U-Net takes the clean face crop and outputs a perturbation delta bounded in L-infinity by epsilon through a tanh gate and scaling. The U-Net tries to maximize detector loss while obeying realism constraints.
+          </p>
+          <h3>4.3 Realism constraints</h3>
+          <ul>
+            <li><strong>Total variation loss</strong> promotes spatial smoothness, which avoids speckle like artifacts.</li>
+            <li><strong>Frequency loss</strong> penalizes very low frequency energy in the perturbation spectrum, which nudges the attacker toward mid to high frequency patterns that often survive compression.</li>
+          </ul>
+          <h3>4.4 Training loop</h3>
+          <p>
+            For each batch we compute clean loss, PGD loss, update the U-Net with its composite attacker loss, then update the detector on a fresh U-Net perturbation. The detector minimizes the sum of clean, PGD, and U-Net losses. Gradient clipping and mixed precision keep the dynamics stable.
+          </p>
+          <div class="callout">
+            The arms race pushes the detector to stop over-relying on a single brittle cue and to combine broader evidence across the face.
+          </div>
+        </section>
+
+        <section id="data">
+          <h2>5. Data pipeline and setup</h2>
+          <p>
+            We extract frames from FaceForensics++ (c23) and Celeb-DF v2, detect faces with MTCNN, then align and crop to 224 by 224. Training uses a subset of FF++ frames. Evaluation uses clean and attacked crops from Celeb-DF v2 for cross-dataset testing. Preprocessing uses resizing and ImageNet normalization. Training runs on a T4 GPU with AMP.
+          </p>
+          <div class="chips">
+            <span class="chip">FF++ c23 train</span>
+            <span class="chip">Celeb-DF v2 test</span>
+            <span class="chip">MTCNN face crops</span>
+            <span class="chip">AMP enabled</span>
+          </div>
+        </section>
+
+        <section id="evaluation">
+          <h2>6. Evaluation protocol</h2>
+          <p>
+            We compare a baseline model trained on clean data and a robust model trained with the dual attacker loop. We test clean, JPEG quality 50, an H.264 like simulation, PGD white box, learned U-Net, and the combined U-Net plus compression settings. We report accuracy, ROC AUC, and TPR at 1 percent FPR. The last metric is the operational focus.
+          </p>
+          <div class="chips">
+            <span class="chip">Clean</span>
+            <span class="chip">JPEG(50)</span>
+            <span class="chip">H.264 like</span>
+            <span class="chip">PGD</span>
+            <span class="chip">Learned U-Net</span>
+            <span class="chip">U-Net + compression</span>
+          </div>
+        </section>
+
+        <section id="results">
+          <h2>7. Results at a glance</h2>
+
+          <h3>7.1 Cross-domain performance on Celeb-DF v2</h3>
+          <table aria-label="Celeb-DF v2 summary">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Accuracy (Base)</th>
+                <th>Accuracy (Robust)</th>
+                <th>AUC (Base)</th>
+                <th>AUC (Robust)</th>
+                <th>TPR@1% FPR (Base)</th>
+                <th>TPR@1% FPR (Robust)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Clean</td>
+                <td>0.624</td><td>0.617</td>
+                <td>0.678</td><td>0.676</td>
+                <td>1.4%</td><td>1.2%</td>
+              </tr>
+              <tr>
+                <td>JPEG(50)</td>
+                <td>0.625</td><td>0.641</td>
+                <td>0.672</td><td>0.681</td>
+                <td>2.3%</td><td>2.3%</td>
+              </tr>
+              <tr>
+                <td>H.264 like</td>
+                <td>0.636</td><td>0.661</td>
+                <td>0.693</td><td>0.703</td>
+                <td>2.2%</td><td>2.4%</td>
+              </tr>
+              <tr>
+                <td>PGD white box</td>
+                <td>0.467</td><td>0.476</td>
+                <td>0.460</td><td>0.483</td>
+                <td>0.1%</td><td>0.1%</td>
+              </tr>
+              <tr>
+                <td>Learned U-Net</td>
+                <td>0.619</td><td>0.607</td>
+                <td>0.675</td><td>0.674</td>
+                <td>1.5%</td><td>1.5%</td>
+              </tr>
+              <tr>
+                <td>U-Net + JPEG(50)</td>
+                <td>0.625</td><td>0.647</td>
+                <td>0.675</td><td>0.685</td>
+                <td>2.0%</td><td class="small">2.9% (higher)</td>
+              </tr>
+              <tr>
+                <td>U-Net + H.264 like</td>
+                <td>0.644</td><td>0.654</td>
+                <td>0.690</td><td>0.699</td>
+                <td>2.5%</td><td class="small">3.0% (higher)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>7.2 In-domain performance on FF++ c23</h3>
+          <p class="small">
+            Both models are near perfect on clean FF++ frames. Under compression the robust model shows a small edge in TPR at 1 percent FPR.
+          </p>
+          <table aria-label="FF++ c23 summary">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Accuracy (Base)</th>
+                <th>Accuracy (Robust)</th>
+                <th>AUC (Base)</th>
+                <th>AUC (Robust)</th>
+                <th>TPR@1% FPR (Base)</th>
+                <th>TPR@1% FPR (Robust)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Clean</td>
+                <td>0.999</td><td>0.998</td>
+                <td>~1.000</td><td>~1.000</td>
+                <td>100%</td><td>100%</td>
+              </tr>
+              <tr>
+                <td>JPEG(50)</td>
+                <td>0.851</td><td>0.836</td>
+                <td>0.922</td><td>0.916</td>
+                <td>34.4%</td><td>38.7%</td>
+              </tr>
+              <tr>
+                <td>H.264 like</td>
+                <td>0.912</td><td>0.912</td>
+                <td>0.965</td><td>0.962</td>
+                <td>64.1%</td><td>67.1%</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout">
+            Takeaway: robustness training preserves clean accuracy and raises recall at strict operating points when attacks meet compression. This is the product's value in practice.
+          </div>
+        </section>
+
+        <section id="explain">
+          <h2>8. Explainability insights</h2>
+          <p>
+            Grad-CAM comparisons show that the baseline often fires on sharp borders like jawlines or the face boundary. The robust model spreads attention over cheeks and forehead, with less spill to background. This matches the idea that adversarial training discourages single cue dependence and pushes attention toward cues that are harder to scrub out with simple edits or compression.
+          </p>
+          <p>
+            Thinking in frequency space helps. Baseline attention aligns with very high frequency details. The robust model raises sensitivity to mid frequency patterns and smooth shading consistency, which are more durable under compression and against small edits.
+          </p>
+        </section>
+
+        <section id="limits">
+          <h2>9. Limits and future work</h2>
+          <ul>
+            <li>Strong PGD still hurts both models on faces at this resolution. Larger models or stronger training schedules could help.</li>
+            <li>Cross-dataset AUC around the high 0.6s shows that generalization to harder fakes remains challenging.</li>
+            <li>Temporal attacks are not modeled yet. Extending realism constraints to video time could improve resilience.</li>
+          </ul>
+        </section>
+
+        <section id="adoption">
+          <h2>10. Adoption and usage</h2>
+          <h3>Where this fits</h3>
+          <ul>
+            <li>Media triage pipelines that operate at strict thresholds. The improved TPR at 1 percent FPR is valuable here.</li>
+            <li>Content moderation pre-filters that run under compression noise.</li>
+            <li>Analyst workflows that need compact models for quick iteration.</li>
+          </ul>
+          <h3>Integration notes</h3>
+          <ul>
+            <li>Crop faces consistently at 224 by 224 and normalize to ImageNet stats to match training.</li>
+            <li>For extremely low false positives, calibrate the decision threshold using ROC on a small validation set that mirrors your source platform compression.</li>
+            <li>If your platform applies strong recompression, prefer the robust model. Expect modest but consistent recall gains at strict thresholds.</li>
+          </ul>
+        </section>
+
+        <section id="faq">
+          <h2>FAQ</h2>
+          <h3>Why a tiny U-Net attacker rather than only PGD</h3>
+          <p>
+            PGD is strong but often looks like fine noise. A learned U-Net generates patterns that are spatially coherent and better mimic small cosmetic tweaks attackers might apply. This combination reduces overfitting to one attack style.
+          </p>
+          <h3>Why total variation and frequency constraints</h3>
+          <p>
+            TV lowers speckle, which makes perturbations more plausible. Penalizing very low frequency energy avoids broad washes that compression would flatten anyway. Together they push the attacker into the band where compression is less destructive and the detector must learn more durable cues.
+          </p>
+          <h3>Does the robust model hurt clean accuracy</h3>
+          <p>
+            On clean FF++ and clean Celeb-DF v2, robust accuracy and AUC match the baseline within noise. The advantage shows up under attack and compression, which is where it matters operationally.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer>
+      <div class="badge">📄 Need details That report is one click away.</div>
+      <div style="margin-top:10px">
+        <a class="pill" href="Adversarially Robust Deepfake Detection-FINAL.pdf" download>Download the full report (PDF)</a>
+      </div>
+      <p class="small" style="margin-top:14px">
+        Place this HTML file and the PDF in the same folder to enable direct download.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
