@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <title>Transformer-Based ASL Fingerspelling to Text</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="A lucid, in-depth page for a Transformer-based ASL fingerspelling-to-text product. Includes data pipeline, model, training, metrics (CER), smoothing, and a real-time demo loop." />
+  <meta name="description" content="Real-time ASL fingerspelling to text using MediaPipe landmarks + a Transformer. Includes a simple webcam app" />
   <style>
     :root{
       --bg:#fbf8f2;
@@ -110,15 +110,14 @@
     <section class="synopsis" id="synopsis">
       <h2>Synopsis</h2>
       <p>
-        This product translates live ASL fingerspelling into readable English text. It uses MediaPipe to extract 3D landmarks for both hands and key upper body joints, converts each frame to a fixed length numeric vector, and feeds the sequence into a compact Transformer. The model predicts letters with context and an end token to finish words. A real time loop with a sliding window and temporal smoothing makes on screen text stable. On validation, the system attains a character error rate around 0.36. Word error is higher by nature, but most words are fully correct in typical tests.
+        This project converts ASL fingerspelling into English text using structured 3D landmarks from MediaPipe and a compact Transformer. Each video frame is mapped to a fixed length feature vector built from both hands and selected upper body joints. A sequence model predicts letters with context and a special token to end words. The system was evaluated with character error rate and achieved about 0.36 on validation.
       </p>
       <div class="chips" aria-label="Key tags">
         <span class="chip">MediaPipe landmarks</span>
         <span class="chip">Transformer encoder and decoder</span>
         <span class="chip">CER ≈ 0.36 (validation)</span>
-        <span class="chip">Sliding window</span>
-        <span class="chip">Temporal smoothing</span>
-        <span class="chip">Real time CLI demo</span>
+        <span class="chip">Sequence normalization</span>
+        <span class="chip">Greedy decoding</span>
       </div>
     </section>
 
@@ -132,11 +131,9 @@
         <a href="#normalization">4. Normalization and serialization</a>
         <a href="#architecture">5. Model architecture</a>
         <a href="#training">6. Training setup</a>
-        <a href="#metrics">7. Metrics</a>
+        <a href="#metric">7. Metric</a>
         <a href="#results">8. Results</a>
-        <a href="#realtime">9. Real time inference</a>
-        <a href="#limits">10. Limits and next steps</a>
-        <a href="#repo">11. Repo layout and quick start</a>
+        <a href="#limits">9. Limits and next steps</a>
         <a href="#faq">FAQ</a>
       </nav>
 
@@ -145,19 +142,19 @@
         <section id="problem">
           <h2>1. Problem and users</h2>
           <p>
-            Fingerspelling communicates names and terms that lack a dedicated sign. Recognizing it from video is challenging due to fast transitions and co articulation between letters. A practical tool needs low latency, low flicker, and strong letter level accuracy so the text reads naturally.
+            Fingerspelling conveys names and terms without dedicated signs. Recognition is difficult due to fast transitions and co articulation between letters. The goal is letter accurate transcription with clear handling of similar handshapes and consistent preprocessing across signers and cameras.
           </p>
         </section>
 
         <section id="solution">
           <h2>2. Solution overview</h2>
           <p>
-            The system replaces raw pixels with structured landmarks, then treats recognition as sequence to sequence prediction. MediaPipe yields 3D keypoints per frame. A Transformer models temporal context and outputs letters A to Z plus an end token. The app layer runs capture, preprocessing, streaming inference, and stabilized text rendering.
+            The system replaces raw pixels with landmarks and frames the task as sequence to sequence prediction. MediaPipe provides 3D keypoints per frame. A Transformer captures temporal context and outputs letters A to Z plus an end token. The pipeline includes careful feature selection and normalization for stable learning.
           </p>
           <div class="chips">
             <span class="chip">Sequence to sequence</span>
-            <span class="chip">Greedy decoding</span>
             <span class="chip">On device landmarks</span>
+            <span class="chip">Context aware decoding</span>
           </div>
         </section>
 
@@ -165,14 +162,14 @@
           <h2>3. Data and feature spec</h2>
           <h3>3.1 Dataset</h3>
           <p>
-            The build uses the Google American Sign Language Fingerspelling dataset with precomputed MediaPipe landmarks. Training examples are landmark sequences paired with target words.
+            The build uses the Google American Sign Language Fingerspelling dataset with precomputed MediaPipe landmarks. Examples are landmark sequences paired with target words.
           </p>
           <h3>3.2 Feature selection (F = 144 per frame)</h3>
           <ul>
-            <li>Pose joints: 6 upper body joints [11, 12, 13, 14, 15, 16].</li>
-            <li>Left hand: 21 landmarks (0 to 20).</li>
-            <li>Right hand: 21 landmarks (0 to 20).</li>
-            <li>Order per frame: pose, then left hand, then right hand; each as (x, y, z) so 48 triplets × 3 = 144 numbers.</li>
+            <li>Pose joints: six upper body joints 11, 12, 13, 14, 15, 16.</li>
+            <li>Left hand: 21 landmarks 0 to 20.</li>
+            <li>Right hand: 21 landmarks 0 to 20.</li>
+            <li>Ordering per frame: pose, then left hand, then right hand. Each landmark contributes x, y, z so 48 triplets times 3 equals 144 numbers.</li>
           </ul>
         </section>
 
@@ -181,34 +178,37 @@
           <ul>
             <li><strong>Center</strong>: mid shoulders if pose present, else mid wrists.</li>
             <li><strong>Scale</strong>: shoulder distance if pose present, else wrist distance.</li>
-            <li><strong>Sanitize</strong>: fill small gaps by linear then forward and backward fill; replace NaN and Inf with zeros; clamp to a safe range; cast to float32.</li>
-            <li><strong>Consistent axes</strong>: follow MediaPipe coordinate conventions.</li>
-            <li><strong>Storage</strong>: fast binary arrays with sequence masks for padding during training.</li>
+            <li><strong>Sanitize</strong>: fill short gaps by linear then forward and backward fill. Replace NaN and Inf with zeros. Clamp to a safe numeric range. Cast to float32.</li>
+            <li><strong>Axes</strong>: follow MediaPipe coordinate conventions.</li>
+            <li><strong>Storage</strong>: fast binary arrays with sequence masks so attention ignores padding.</li>
           </ul>
+          <p class="small">
+            These steps are mirrored wherever the model is evaluated so distribution shift is minimized.
+          </p>
         </section>
 
         <section id="architecture">
           <h2>5. Model architecture</h2>
           <h3>5.1 Encoder and decoder</h3>
           <p>
-            The encoder reads landmark sequences and builds contextual representations with multi head self attention and position wise feed forward layers. The decoder predicts characters step by step with masked self attention and cross attention over encoder outputs. Positional signals are added on both sides.
+            The encoder ingests the landmark sequence and builds contextual representations with multi head self attention and position wise feed forward layers. The decoder generates characters step by step using masked self attention and cross attention over encoder outputs. Positional signals are added on both sides so order is represented.
           </p>
           <h3>5.2 Practical size</h3>
           <p>
-            A moderate footprint balances latency and accuracy. Typical settings are about 4 to 6 layers on each side, around 8 heads, and model width in the low hundreds such as 256 or 512. Dropout after attention and after feed forward helps regularize. Residual connections and layer normalization follow the standard Transformer design.
+            A moderate footprint balances latency and accuracy. Typical settings are around four to six layers on both encoder and decoder, about eight heads, and model width near 256 to 512. Dropout after attention and after feed forward helps regularize. Residual connections and layer normalization follow the standard Transformer design.
           </p>
           <h3>5.3 Output vocabulary</h3>
           <p>
-            Characters A to Z plus an end token. A linear layer maps to the character set followed by softmax. Greedy decoding works well for spelling and real time use.
+            Characters A to Z plus an end token. A linear layer maps to the character set followed by softmax. Greedy decoding is sufficient for spelling.
           </p>
           <table aria-label="Model summary">
             <thead><tr><th>Component</th><th>Choice</th><th>Notes</th></tr></thead>
             <tbody>
               <tr><td>Input</td><td>F = 144 features per frame</td><td>Pose 11 to 16, both hands 0 to 20</td></tr>
               <tr><td>Encoder</td><td>Self attention</td><td>Sinusoidal positional signals</td></tr>
-              <tr><td>Decoder</td><td>Masked self attention + cross attention</td><td>Greedy decode</td></tr>
+              <tr><td>Decoder</td><td>Masked self attention plus cross attention</td><td>Greedy decode</td></tr>
               <tr><td>Width</td><td>≈ 256 to 512</td><td>With dropout, residual, layer norm</td></tr>
-              <tr><td>Output</td><td>Letters A to Z + EOS</td><td>Softmax over characters</td></tr>
+              <tr><td>Output</td><td>Letters A to Z plus EOS</td><td>Softmax over characters</td></tr>
             </tbody>
           </table>
         </section>
@@ -218,15 +218,15 @@
           <ul>
             <li>Loss: sequence cross entropy with teacher forcing.</li>
             <li>Optimization: Adam with warmup then decay.</li>
-            <li>Batching: bucket by length, pad and mask attention on padded positions.</li>
-            <li>Validation: split from training data; track CER and WER curves to pick the best checkpoint by lowest validation CER.</li>
+            <li>Batching: bucket by length, pad, and mask attention on padded positions.</li>
+            <li>Validation: track character error rate and select the checkpoint with lowest validation CER.</li>
           </ul>
         </section>
 
-        <section id="metrics">
-          <h2>7. Metrics</h2>
+        <section id="metric">
+          <h2>7. Metric</h2>
           <p>
-            The system reports character error rate and word error rate. CER measures letter level edits relative to reference length. WER measures word level errors and is stricter since any letter error can mark a word wrong.
+            <strong>Character Error Rate</strong> measures character level edits relative to reference length. This is the primary metric and the basis for model selection.
           </p>
         </section>
 
@@ -236,14 +236,9 @@
             <thead><tr><th>Metric</th><th>Value</th><th>Notes</th></tr></thead>
             <tbody>
               <tr>
-                <td>CER (validation)</td>
+                <td>CER on validation</td>
                 <td>≈ 0.36</td>
                 <td>From the project repository</td>
-              </tr>
-              <tr>
-                <td>WER</td>
-                <td>Qualitatively higher than CER</td>
-                <td>Majority of words fully correct on held out tests</td>
               </tr>
             </tbody>
           </table>
@@ -252,83 +247,31 @@
           </div>
         </section>
 
-        <section id="realtime">
-          <h2>9. Real time inference</h2>
-          <h3>9.1 Streaming loop</h3>
-          <ul>
-            <li>Capture webcam frames.</li>
-            <li>Extract landmarks and apply the same normalization as training.</li>
-            <li>Maintain a rolling window of recent frames, for example around 30 frames which is roughly 3 seconds at 10 fps.</li>
-            <li>Run the encoder on the window and decode letters until the end token or a safe limit.</li>
-          </ul>
-          <h3>9.2 Temporal smoothing</h3>
-          <p>
-            A moving average over next token probabilities plus a short stability gate reduces flicker. The UI commits a letter only after consistent confidence. When the end token is stable the word is finalized and the buffer resets.
-          </p>
-          <h3>9.3 Performance notes</h3>
-          <p>
-            MediaPipe typically processes a frame in under about 20 milliseconds on a laptop. The overall experience is near real time with a small delay due to windowing and smoothing.
-          </p>
-        </section>
-
         <section id="limits">
-          <h2>10. Limits and next steps</h2>
+          <h2>9. Limits and next steps</h2>
           <ul>
-            <li>Scope is fingerspelling letters, not the full sign lexicon yet.</li>
+            <li>Scope is fingerspelling letters, not the full sign lexicon.</li>
             <li>Very fast signing can cause dropped or merged letters.</li>
             <li>Lighting, occlusion, or partial hands can degrade landmarks.</li>
           </ul>
           <p class="small">
-            Next steps: light personalization with a few user examples, optional beam search for long words, and mobile deployment with quantization.
+            Next steps include light personalization with a few user examples, optional beam search for long words, and mobile deployment with quantization.
           </p>
-        </section>
-
-        <section id="repo">
-          <h2>11. Repo layout and quick start</h2>
-          <h3>Structure</h3>
-          <pre class="small" aria-label="Repo tree">
-assets/           # weights and character maps
-notebooks/        # exploratory notebook
-src/aslfs_rt/     # library package for app + model
-  app_cli.py      # webcam demo
-  config.py       # small config helpers
-  model.py        # Transformer
-  preprocess.py   # feature extraction and normalization
-README.md         # usage guide
-          </pre>
-          <h3>Requirements</h3>
-          <pre class="small">
-numpy
-opencv-python
-mediapipe==0.10.14
-torch
-          </pre>
-          <h3>Run the demo</h3>
-          <pre class="small">
-# Create and activate a venv, then:
-pip install -r requirements.txt
-
-# Put your trained weights at:
-assets/model_phase2_best.pt
-
-# Start the webcam app:
-python -m aslfs_rt.app_cli --bundle . --source 0 --flip
-          </pre>
         </section>
 
         <section id="faq">
           <h2>FAQ</h2>
           <h3>Why landmarks instead of pixels</h3>
           <p>
-            Landmarks expose the true signal which is hand motion. They cut input size and speed up training and inference while improving robustness across cameras.
+            Landmarks expose the essential signal which is hand motion. They reduce input size and speed up training while improving robustness across camera setups.
           </p>
           <h3>Why a Transformer for letters</h3>
           <p>
-            It models context over time so the system can disambiguate similar handshapes by looking at motion before and after each frame.
+            It models temporal context so the system can disambiguate similar handshapes by using motion before and after each frame.
           </p>
-          <h3>How do you pick the final checkpoint</h3>
+          <h3>How is the final checkpoint chosen</h3>
           <p>
-            By the lowest validation CER with stable WER, confirmed on a held out split.
+            By the lowest validation character error rate on a held out split.
           </p>
         </section>
       </div>
