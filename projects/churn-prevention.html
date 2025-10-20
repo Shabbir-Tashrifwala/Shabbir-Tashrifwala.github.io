@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Churn Prevention Using Survival Analysis and Next-Best-Action Modeling</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="End to end churn prevention system that predicts when customers will churn with survival analysis and turns risk into concrete retention actions with a next best action engine. Includes batch scoring and a real time FastAPI service." />
+  <style>
+    :root{
+      /* Light, warm palette for a calm reading experience */
+      --bg:#fcfaf6;
+      --surface:#ffffff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --border:#e9e9ef;
+      --chip:#f5f6fb;
+      --callout:#eef2ff;
+      --primary:#2452ff;
+      --primary-hover:#1b40d6;
+      --ring: rgba(36, 82, 255, 0.18);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a{color:var(--primary); text-decoration:none}
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter:saturate(1.1) blur(6px);
+      background:rgba(252,250,246,0.85);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{display:flex; align-items:center; gap:14px; padding:10px 24px; max-width:1100px; margin:0 auto; flex-wrap:wrap}
+    .title{margin:0; font-size:18px}
+    .header-actions{display:flex; gap:10px; flex-wrap:wrap}
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 16px; border-radius:999px; font-weight:600;
+      border:1px solid transparent; box-shadow:0 8px 20px var(--ring);
+      transition:transform .05s ease, background-color .2s ease, border-color .2s ease;
+    }
+    .pill.primary{background:var(--primary); color:#fff}
+    .pill.primary:hover{background:var(--primary-hover); transform:translateY(-1px)}
+    .pill.ghost{background:#fff; color:var(--ink); border-color:var(--border); box-shadow:none}
+    .pill.ghost:hover{background:#f8f9ff; transform:translateY(-1px); border-color:#d9dce3}
+
+    main{padding:24px}
+    section{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px}
+    h2{margin:0 0 12px; font-size:24px}
+    h3{margin:16px 0 8px; font-size:18px}
+    p{margin:10px 0}
+    .small{font-size:13px; color:var(--muted)}
+    .synopsis h2{margin:0 0 10px 0}
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .chip{background:var(--chip); border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:13px; color:var(--muted)}
+    .grid{display:grid; gap:18px}
+    @media(min-width:980px){ .grid{grid-template-columns: 280px 1fr} }
+
+    nav.toc{
+      position:sticky; top:76px; align-self:start;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; padding:14px;
+    }
+    nav.toc h3{margin:6px 6px 10px 6px; font-size:13px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase}
+    nav.toc a{display:block; color:var(--ink); padding:8px 10px; border-radius:10px; font-size:14px; border:1px solid transparent}
+    nav.toc a:hover{background:#f6f7ff; border-color:var(--border)}
+
+    .callout{padding:12px 14px; border-left:4px solid var(--primary); background:var(--callout); border-radius:10px}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; margin:10px 0}
+    thead th{background:#f6f7fb; color:var(--muted); font-weight:600; text-align:left; padding:10px; border-bottom:1px solid var(--border)}
+    tbody td{padding:10px; border-bottom:1px solid var(--border)}
+    tbody tr:hover td{background:#fafbff}
+
+    footer{color:var(--muted); text-align:center; padding:36px 0}
+    .badge{display:inline-flex; align-items:center; gap:8px; background:#f6f7fb; padding:8px 12px; border-radius:12px; border:1px solid var(--border)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <h1 class="title">Churn Prevention Using Survival Analysis and Next-Best-Action Modeling</h1>
+      <div style="flex:1"></div>
+      <div class="header-actions">
+        <!-- Place the HTML file and the PDF in the same folder so this works -->
+        <a class="pill primary" href="Churn%20Prevention%20Using%20Survival%20Analysis%20and%20Next-Best-Action%20Modeling.pdf" download>
+          ⬇️ Download the full report <small>(PDF)</small>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Synopsis first, as requested -->
+    <section class="synopsis" id="synopsis">
+      <h2>Synopsis</h2>
+      <p>
+        This product predicts not just who will churn but when they are likely to churn, and then turns those time based risks into practical next steps for a retention team. It reframes churn as a time to event task, builds Kaplan Meier insights, trains a Cox proportional hazards model for interpretability and a gradient boosted survival model for accuracy, and evaluates them with survival specific metrics like C index, time dependent Brier score, and Lift at top K. The outputs feed a next best action matrix that recommends the right intervention at the right time, and the system ships with both a batch scoring job and a real time FastAPI service so the business can act on day one.
+      </p>
+      <div class="chips" aria-label="Key tags">
+        <span class="chip">Survival analysis</span>
+        <span class="chip">Kaplan Meier</span>
+        <span class="chip">CoxPH</span>
+        <span class="chip">Gradient Boosting</span>
+        <span class="chip">C index and Brier</span>
+        <span class="chip">Lift@K</span>
+        <span class="chip">Next Best Action</span>
+        <span class="chip">Batch + FastAPI</span>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:18px">
+      <nav class="toc" aria-label="Table of contents">
+        <h3>Contents</h3>
+        <a href="#problem">1. Problem the product solves</a>
+        <a href="#solution">2. Solution overview</a>
+        <a href="#data">3. Data and survival transformation</a>
+        <a href="#km">4. Exploratory survival analysis</a>
+        <a href="#models">5. Modeling approach</a>
+        <a href="#evaluation">6. Evaluation protocol</a>
+        <a href="#results">7. Results at a glance</a>
+        <a href="#nba">8. Next Best Action strategy</a>
+        <a href="#deploy">9. Deployment paths</a>
+        <a href="#eng">10. Engineering details</a>
+        <a href="#limits">11. Limits and future work</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="content">
+        <section id="problem">
+          <h2>1. Problem the product solves</h2>
+          <p>
+            Classification answers if a customer will churn within a window. Survival analysis answers when churn becomes likely for each individual. Timing unlocks proactive outreach, smarter incentive timing, and better budget allocation.
+          </p>
+          <div class="callout">
+            North star: improve lift in the top risk bucket while keeping survival probabilities calibrated at short and medium horizons.
+          </div>
+        </section>
+
+        <section id="solution">
+          <h2>2. Solution overview</h2>
+          <p>
+            The product converts a telecom churn dataset into a survival format, explores segment level retention with Kaplan Meier curves, trains two models, and then operationalizes the best model for both batch campaigns and real time calls. The system also includes a practical decision matrix that maps risk and value to the next best action so teams know exactly what to do and when to do it.
+          </p>
+          <div class="chips">
+            <span class="chip">Time to event framing</span>
+            <span class="chip">Dual model track</span>
+            <span class="chip">Prescriptive layer</span>
+          </div>
+        </section>
+
+        <section id="data">
+          <h2>3. Data and survival transformation</h2>
+          <p>
+            Source: IBM Telco Customer Churn. Tenure in months is the time variable. Event flag is 1 for churned customers and 0 for right censored customers who were still active at last observation. Categorical fields are one hot encoded. A compact autopay flag is derived from payment method. Senior citizen, contract type, internet service type, support add ons, and billing fields are retained.
+          </p>
+          <p class="small">
+            This structure preserves information from active customers and avoids bias that a plain classifier would create by discarding censored rows.
+          </p>
+        </section>
+
+        <section id="km">
+          <h2>4. Exploratory survival analysis</h2>
+          <p>
+            Kaplan Meier curves show how retention changes with time. The full cohort curve steps down as churn events occur. Segment curves reveal where risk concentrates.
+          </p>
+          <ul>
+            <li><strong>Contract:</strong> month to month customers drop fast. One year and two year stay longer.</li>
+            <li><strong>Internet service:</strong> fiber has higher churn than DSL, and both are higher than no internet.</li>
+            <li><strong>Autopay:</strong> non autopay customers churn more than autopay users.</li>
+            <li><strong>Senior status:</strong> seniors churn faster than non seniors.</li>
+          </ul>
+          <p>
+            Log rank tests confirm that these curves differ in a statistically meaningful way. These insights shape features and the action plan.
+          </p>
+        </section>
+
+        <section id="models">
+          <h2>5. Modeling approach</h2>
+          <h3>5.1 Cox Proportional Hazards</h3>
+          <p>
+            The Cox model estimates how each feature scales the hazard of churn. Hazard ratios give clear levers. Month to month raises risk relative to two year. Non autopay raises risk relative to autopay. Fiber raises risk relative to DSL. We check proportional hazards with standard diagnostics and proceed when reasonable.
+          </p>
+          <h3>5.2 Gradient Boosting Survival</h3>
+          <p>
+            A gradient boosted survival model captures non linearities and interactions while optimizing a Cox style objective. Tuning targets estimators, depth, learning rate, and subsampling. This model usually ranks risk better while Cox remains easier to explain.
+          </p>
+          <div class="chips">
+            <span class="chip">Interpretability vs accuracy</span>
+            <span class="chip">Use both for insight and power</span>
+          </div>
+        </section>
+
+        <section id="evaluation">
+          <h2>6. Evaluation protocol</h2>
+          <h3>6.1 Concordance index</h3>
+          <p>
+            C index measures how well the model orders customers by time to churn. Values well above 0.5 show useful discrimination. The boosted model typically edges out Cox on this metric.
+          </p>
+          <h3>6.2 Time dependent Brier score</h3>
+          <p>
+            Brier score evaluates the accuracy of predicted survival probabilities at chosen horizons with proper censoring weights. Lower is better. Curves across 6 to 24 months help judge calibration.
+          </p>
+          <h3>6.3 Lift at top K percent</h3>
+          <p>
+            Lift answers a business question. If we target the top decile by risk, how many more churners do we capture compared to random targeting. Strong lift in the top decile means efficient spend.
+          </p>
+        </section>
+
+        <section id="results">
+          <h2>7. Results at a glance</h2>
+          <ul>
+            <li>Kaplan Meier confirmed contract length, autopay, internet type, and senior status as strong drivers.</li>
+            <li>Cox delivered clear hazard ratios that match the survival curves. It works as a story engine for stakeholders.</li>
+            <li>Gradient boosting improved rank order and reduced Brier at common horizons. It is the production scorer.</li>
+            <li>Lift improved in the top decile which makes campaigns cheaper for the same save rate.</li>
+          </ul>
+          <table aria-label="Model comparison highlights">
+            <thead>
+              <tr><th>Aspect</th><th>CoxPH</th><th>Boosted survival</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Interpretability</td><td>High with hazard ratios</td><td>Lower, explain with feature importance</td></tr>
+              <tr><td>Discrimination</td><td>Good</td><td>Very good</td></tr>
+              <tr><td>Calibration</td><td>Good</td><td>Good to very good</td></tr>
+              <tr><td>When to use</td><td>Explain drivers and set policy</td><td>Score customers for campaigns</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="nba">
+          <h2>8. Next Best Action strategy</h2>
+          <p>
+            Prediction has value only when it leads to action. The system segments by churn risk and by customer value, then maps each cell to a concrete play. High value and high risk gets a high touch offer and an early renewal path. Medium risk gets automated education or usage nudges. Low risk is monitored so spend is not wasted.
+          </p>
+          <div class="callout">
+            Timing matters. Survival curves tell us when risk spikes. Outreach is scheduled before that spike, not after it.
+          </div>
+          <p class="small">
+            A future iteration can add true uplift modeling once A B tests produce treatment response data.
+          </p>
+        </section>
+
+        <section id="deploy">
+          <h2>9. Deployment paths</h2>
+          <h3>9.1 Batch scoring</h3>
+          <p>
+            A scheduled job loads the latest snapshot, applies the preprocessing pipeline and the trained model, computes survival probabilities at chosen horizons, and exports a scored file with a recommended next action for each customer. This feeds marketing tools and CRM lists.
+          </p>
+          <h3>9.2 Real time API</h3>
+          <p>
+            A FastAPI service loads the serialized pipeline and model on startup and exposes a POST endpoint. The endpoint validates payloads with Pydantic, runs the pipeline, returns a risk score and survival probabilities, and can be queried by an agent desktop or a web app.
+          </p>
+        </section>
+
+        <section id="eng">
+          <h2>10. Engineering details</h2>
+          <ul>
+            <li><strong>Preprocessing:</strong> ColumnTransformer for numeric scaling and one hot encoding for categoricals. Same transformer is reused in training and inference.</li>
+            <li><strong>Feature hints:</strong> contract, autopay flag, internet type, senior citizen, add on count, support features, monthly charges and simple ratios.</li>
+            <li><strong>Validation:</strong> train test split with stratified churn rate, optional cross validation for tuning the boosted model.</li>
+            <li><strong>Serialization:</strong> joblib for the full pipeline plus model bundle to keep inference consistent.</li>
+            <li><strong>Monitoring:</strong> track C index drift and Brier at 6 and 12 months, track campaign lift by decile, and audit calibration with reliability plots.</li>
+          </ul>
+        </section>
+
+        <section id="limits">
+          <h2>11. Limits and future work</h2>
+          <ul>
+            <li>Static features only. Add time varying covariates like monthly usage and ticket counts.</li>
+            <li>No direct uplift modeling yet. Introduce controlled experiments and train meta learners.</li>
+            <li>Single event focus. Explore competing risks to separate price churn from service churn.</li>
+            <li>Localization. Tune actions and thresholds by region and plan type.</li>
+          </ul>
+        </section>
+
+        <section id="faq">
+          <h2>FAQ</h2>
+          <h3>Why survival analysis instead of a classifier</h3>
+          <p>
+            It uses censored information from active customers and gives time based probabilities. That supports proactive timing which a plain classifier cannot do well.
+          </p>
+          <h3>Which model should I trust day to day</h3>
+          <p>
+            Use the boosted survival model for scoring and the Cox model for explanations. They complement each other.
+          </p>
+          <h3>How do I act on the scores</h3>
+          <p>
+            Use the decision matrix. Pick actions that match both risk and value. Schedule contact before the customer’s risk spike.
+          </p>
+          <h3>What does a good result look like</h3>
+          <p>
+            Higher lift in the top decile and well calibrated probabilities at the horizons that matter to your business. That translates to fewer lost customers for the same budget.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer>
+      <div class="badge">📄 Want the full write up</div>
+      <div style="margin-top:10px">
+        <a class="pill primary" href="Churn%20Prevention%20Using%20Survival%20Analysis%20and%20Next-Best-Action%20Modeling.pdf" download>Download the full report (PDF)</a>
+      </div>
+      <p class="small" style="margin-top:14px">Place this HTML file and the PDF in the same folder to enable direct download.</p>
+    </footer>
+  </main>
+</body>
+</html>
