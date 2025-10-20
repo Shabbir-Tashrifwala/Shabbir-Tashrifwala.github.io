@@ -1,1 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Transformer-Based ASL Fingerspelling to Text</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A lucid, in-depth product page for a Transformer-based ASL fingerspelling to text system that uses MediaPipe landmarks, a sequence-to-sequence model, and a real-time inference loop with temporal smoothing." />
+  <style>
+    :root{
+      /* Warm, readable palette in the spirit of a clean portfolio */
+      --page:#faf7f1;
+      --surface:#ffffff;
+      --ink:#0f172a;
+      --muted:#5b6475;
+      --line:#e7e7ec;
+      --chip:#f4f6fb;
+
+      --accent:#2151ff;
+      --accent-press:#153ed6;
+      --glow:rgba(33,81,255,.15);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--page); color:var(--ink);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+
+    a{color:var(--accent); text-decoration:none}
+    a:hover{opacity:.9}
+
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.1) blur(8px);
+      background:rgba(250,247,241,.85);
+      border-bottom:1px solid var(--line);
+    }
+    .header-inner{
+      display:flex; gap:16px; padding:14px 24px; max-width:1100px; margin:0 auto; align-items:flex-start; flex-wrap:wrap;
+    }
+    .brand{display:flex; flex-direction:column; gap:6px}
+    .brand h1{margin:0; font-size:20px}
+    .actions{display:flex; gap:12px; flex-wrap:wrap}
+
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 16px; border-radius:999px; font-weight:600;
+      border:1px solid transparent; cursor:pointer;
+      transition:transform .06s ease, background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+    }
+    .btn.primary{background:var(--accent); color:#fff; box-shadow:0 10px 24px var(--glow)}
+    .btn.primary:hover{background:var(--accent-press); transform:translateY(-1px)}
+    .btn.ghost{background:#fff; color:var(--ink); border-color:var(--line)}
+    .btn.ghost:hover{background:#fafcff; transform:translateY(-1px)}
+
+    main{padding:24px}
+    section{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px}
+
+    /* Synopsis */
+    .synopsis h2{margin:0 0 10px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .chip{background:var(--chip); border:1px solid var(--line); padding:6px 10px; border-radius:999px; font-size:13px; color:var(--muted)}
+
+    h2{margin:0 0 12px; font-size:24px}
+    h3{margin:16px 0 8px; font-size:18px}
+    p{margin:10px 0}
+
+    /* Layout */
+    .grid{display:grid; gap:18px}
+    @media(min-width:980px){ .grid{grid-template-columns:280px 1fr} }
+
+    nav.toc{
+      position:sticky; top:96px; align-self:start; background:var(--surface);
+      border:1px solid var(--line); border-radius:14px; padding:14px;
+    }
+    nav.toc h3{margin:6px 6px 10px 6px; font-size:13px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase}
+    nav.toc a{
+      display:block; color:var(--ink); padding:8px 10px; border-radius:10px; font-size:14px; border:1px solid transparent;
+    }
+    nav.toc a:hover{background:#f6f8ff; border-color:var(--line)}
+
+    .callout{
+      padding:12px 14px; border-left:4px solid var(--accent);
+      background:#f3f6ff; border-radius:10px;
+    }
+
+    /* Tables */
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; margin:12px 0}
+    thead th{background:#f6f7fb; color:var(--muted); font-weight:600; text-align:left; padding:10px; border-bottom:1px solid var(--line)}
+    tbody td{padding:10px; border-bottom:1px solid var(--line)}
+    tbody tr:hover td{background:#fafcff}
+
+    footer{color:var(--muted); text-align:center; padding:36px 0}
+    .small{font-size:13px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>Transformer-Based ASL Fingerspelling to Text</h1>
+        <div class="actions">
+          <!-- Place this HTML next to the PDF file below so the button downloads it directly -->
+          <a class="btn primary" href="Transformer-Based%20ASL%20Fingerspelling-to-Text%20System.pdf" download>
+            ⬇️ Download the full report <small>(PDF)</small>
+          </a>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Synopsis -->
+    <section class="synopsis" id="synopsis">
+      <h2>Synopsis</h2>
+      <p>
+        This product converts live ASL fingerspelling into readable English text. It uses MediaPipe to extract 3D hand and upper body landmarks from each video frame and feeds those sequences into a compact Transformer that learns temporal patterns of letters. The pipeline is data centric, with careful feature selection and normalization that make the model robust across signers and camera setups. Real time inference is achieved with a sliding window and temporal smoothing so the on screen text is stable and easy to read. Evaluation uses character error rate and word error rate, which reflect real sequence quality rather than only exact matches.
+      </p>
+      <div class="chips" aria-label="Key tags">
+        <span class="chip">MediaPipe landmarks</span>
+        <span class="chip">Encoder decoder Transformer</span>
+        <span class="chip">WER and CER</span>
+        <span class="chip">Sliding window</span>
+        <span class="chip">Temporal smoothing</span>
+        <span class="chip">Real time demo</span>
+      </div>
+    </section>
+
+    <div class="grid" style="margin-top:18px">
+      <!-- Table of contents -->
+      <nav class="toc" aria-label="Table of contents">
+        <h3>Contents</h3>
+        <a href="#problem">1. Problem and users</a>
+        <a href="#overview">2. Solution overview</a>
+        <a href="#data">3. Data pipeline</a>
+        <a href="#model">4. Model architecture</a>
+        <a href="#training">5. Training and metrics</a>
+        <a href="#inference">6. Real time inference</a>
+        <a href="#stability">7. Output stability</a>
+        <a href="#performance">8. Performance and results</a>
+        <a href="#limits">9. Limits and opportunities</a>
+        <a href="#deployment">10. Deployment ideas</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <!-- Main content -->
+      <div class="content">
+        <section id="problem">
+          <h2>1. Problem and users</h2>
+          <p>
+            Fingerspelling communicates names and terms that do not have a dedicated sign. Recognizing it from video is hard because handshapes change quickly and letters blend through co articulation. A usable tool should handle continuous motion, similar letters, and variable speed while keeping latency low for natural conversation. This product targets developers and researchers who want a reliable foundation for fingerspelling recognition that is simple to integrate and practical to demo live.
+          </p>
+          <div class="callout">
+            Goal: readable text from continuous fingerspelling with low flicker and low character error.
+          </div>
+        </section>
+
+        <section id="overview">
+          <h2>2. Solution overview</h2>
+          <p>
+            The system treats fingerspelling as sequence to sequence translation. It replaces raw pixels with structured 3D landmarks from MediaPipe to shrink the vision burden. The core is a Transformer that looks at the full motion history and predicts letters with context. A thin application layer captures webcam frames, runs landmark extraction, normalizes features, maintains a sliding window, decodes letters, and overlays text on the video stream.
+          </p>
+          <div class="chips">
+            <span class="chip">Sequence to sequence</span>
+            <span class="chip">Context aware decoding</span>
+            <span class="chip">Live webcam loop</span>
+          </div>
+        </section>
+
+        <section id="data">
+          <h2>3. Data pipeline</h2>
+          <h3>3.1 Source and structure</h3>
+          <p>
+            The build uses the Google ASL Fingerspelling dataset which includes pre extracted landmarks per frame. Each example becomes a sequence of feature vectors and a target string. This allows high throughput training without heavy video preprocessing.
+          </p>
+          <h3>3.2 Feature selection</h3>
+          <p>
+            From 543 landmarks per frame only the informative subset is kept. Both hands are included with 21 points per hand. A small set of upper body joints assists with orientation. Facial landmarks are dropped to reduce noise since they are not critical for letters.
+          </p>
+          <h3>3.3 Normalization</h3>
+          <ul>
+            <li>Interpolate occasional missing points so sequences stay continuous.</li>
+            <li>Translate so the shoulder midpoint defines the origin.</li>
+            <li>Scale by shoulder width so sizes are consistent across signers and cameras.</li>
+            <li>Keep axes consistent with MediaPipe conventions.</li>
+          </ul>
+          <h3>3.4 Serialization</h3>
+          <p>
+            Processed sequences are stored in fast binary formats such as NPY or TFRecord. During training a loader pads to batch length and provides masks so attention ignores padding.
+          </p>
+        </section>
+
+        <section id="model">
+          <h2>4. Model architecture</h2>
+          <h3>4.1 Encoder decoder Transformer</h3>
+          <p>
+            The encoder reads the landmark sequence and builds contextual representations with multi head self attention and feed forward layers. The decoder generates text one character at a time with masked self attention and cross attention over encoder outputs. Positional encodings are added on both sides so time order is known.
+          </p>
+          <h3>4.2 Practical size and embeddings</h3>
+          <p>
+            A moderate footprint works well for real time use. Typical settings are 4 to 6 layers on each side, 8 heads, and model width of 256 to 512. Landmark frames are projected with a learned linear layer into the model dimension. Output uses a character vocabulary A to Z plus an end token.
+          </p>
+          <table aria-label="Model at a glance">
+            <thead><tr><th>Component</th><th>Choice</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>Input features</td><td>Hands plus upper body 3D landmarks</td><td>~150 numeric values per frame after selection</td></tr>
+              <tr><td>Positional signals</td><td>Sinusoidal encodings</td><td>No extra training cost</td></tr>
+              <tr><td>Decoder output</td><td>Letters A Z plus EOS</td><td>Greedy decoding is sufficient for words</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="training">
+          <h2>5. Training and metrics</h2>
+          <h3>5.1 Objective and optimization</h3>
+          <p>
+            Training uses sequence cross entropy with teacher forcing. Adam optimizer is used with warmup then decay. Efficient loaders bucket by length and mask padding in attention.
+          </p>
+          <h3>5.2 Validation and early stopping</h3>
+          <p>
+            Validation uses character error rate and word error rate. CER tracks letter level accuracy and is sensitive to small improvements. WER reflects end user readability at the word level. Plots in a dashboard help monitor loss and CER to detect plateaus.
+          </p>
+          <div class="callout">
+            Use CER to tune, check WER for user perception.
+          </div>
+        </section>
+
+        <section id="inference">
+          <h2>6. Real time inference</h2>
+          <p>
+            The demo connects a webcam to MediaPipe, applies exactly the same normalization as training, and maintains a rolling buffer of the most recent frames. The encoder runs on the window. The decoder emits letters until the end token or a safe length is reached. Latency stays low since landmarks are fast and the model is compact.
+          </p>
+          <ul>
+            <li>Capture: OpenCV reads frames.</li>
+            <li>Landmarks: MediaPipe Holistic or Hands finds keypoints on CPU.</li>
+            <li>Window: keep the last N frames, for example about 3 seconds of motion.</li>
+            <li>Decode: greedy search works well for spelling.</li>
+          </ul>
+        </section>
+
+        <section id="stability">
+          <h2>7. Output stability</h2>
+          <p>
+            Naive frame by frame decoding can flicker. The app smooths probabilities across a short span and commits letters only after consistent confidence. This behaves like a low pass filter and greatly improves readability.
+          </p>
+          <ul>
+            <li>Average logits or probabilities for the same position over recent frames.</li>
+            <li>Commit a letter when the top choice is stable for a brief window.</li>
+            <li>When the end token is stable, finalize the word and clear the buffer.</li>
+          </ul>
+        </section>
+
+        <section id="performance">
+          <h2>8. Performance and results</h2>
+          <p>
+            On held out data the model reaches low CER and a majority of words are fully correct. Typical mistakes involve similar shapes such as I vs J, M vs N, and U vs V. In the live demo letters appear progressively with little jitter. Throughput is comfortable on a laptop CPU with the option to use a GPU for even smoother runs.
+          </p>
+          <table aria-label="Observed behavior examples">
+            <thead><tr><th>Scenario</th><th>Observation</th></tr></thead>
+            <tbody>
+              <tr><td>Short common words</td><td>High accuracy and quick convergence</td></tr>
+              <tr><td>Very fast signing</td><td>Occasional dropped or merged letters</td></tr>
+              <tr><td>Repeated letters</td><td>May need a slight pause to mark doubles clearly</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="limits">
+          <h2>9. Limits and opportunities</h2>
+          <ul>
+            <li>Scope covers fingerspelling letters, not the full ASL lexicon yet.</li>
+            <li>Non manual signals like facial expression are excluded, which reduces context.</li>
+            <li>Personal styles vary. A small per user calibration could improve accuracy.</li>
+          </ul>
+          <div class="callout">
+            Next steps: add word level signs, consider multimodal cues, and explore fast user adaptation.
+          </div>
+        </section>
+
+        <section id="deployment">
+          <h2>10. Deployment ideas</h2>
+          <p>
+            For wider access consider model quantization and export to TensorFlow Lite or ONNX for mobile. MediaPipe runs on device already. The Transformer can be trimmed or quantized to 8 bit. Beam search can be added if phrases grow longer. A personalization routine could fine tune a small adapter with a few user examples.
+          </p>
+        </section>
+
+        <section id="faq">
+          <h2>FAQ</h2>
+          <h3>Why landmarks instead of raw pixels</h3>
+          <p>
+            Landmarks turn a vision problem into time series modeling. This reduces input size and speeds up training and inference while keeping the key motion signal.
+          </p>
+          <h3>Why a Transformer for letters</h3>
+          <p>
+            It models context across frames and learns how letters influence each other during motion. This helps disambiguate similar shapes that a single frame classifier might confuse.
+          </p>
+          <h3>Can this handle continuous phrases</h3>
+          <p>
+            Yes for sequences of words that are fingerspelled. The end token and pauses help separate words. Full sentence translation needs a wider vocabulary of signs and grammar modeling.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <footer>
+      <p class="small">
+        Tip: keep this HTML file in the same folder as <em>Transformer-Based ASL Fingerspelling-to-Text System.pdf</em> so the download button works offline.
+      </p>
+    </footer>
+  </main>
+
+  <!-- Source basis for this page, kept invisible to readers:
+       :contentReference[oaicite:0]{index=0}
+       :contentReference[oaicite:1]{index=1}
+  -->
+</body>
+</html>
 
