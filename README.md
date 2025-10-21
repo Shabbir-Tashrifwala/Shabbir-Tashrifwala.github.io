@@ -8,7 +8,7 @@
    - `"repo": "YOUR_GITHUB_USERNAME/YOUR_REPO_NAME"` (e.g., `"shabbirtashrifwala/shabbir-portfolio"`)
    - `"branch": "main"`
    - Keep `"use_api": true` and `"fallback_to_manifest": true` (recommended).
-2. Push everything to your repo root and enable GitHub Pages (Settings → Pages → Source: `main` → Folder: `/ (root)`).
+2. Push everything to your repo root and enable GitHub Pages (Settings > Pages > Source: `main` > Folder: `/ (root)`).
 
 ## How it works
 - On GitHub Pages, the site uses the **GitHub API** to list `/projects` & `/blogs` and fetch metadata from each HTML file.
