@@ -170,7 +170,11 @@ document.addEventListener('DOMContentLoaded', function(){
       target.innerHTML = '';
       metas.forEach(m => target.appendChild(makeCard(m)));
       if (metas.length === 0){
-        target.innerHTML = `<div class="card" style="grid-column: span 12;"><p class="muted">No ${folder} yet. Add HTML files to <code>/${folder}</code>.</p></div>`;
+        if (folder === 'blogs') {
+          target.innerHTML = `<div class="card marquee-card" style="grid-column: span 12;"><div class="marquee muted"><span>Blogs coming soon</span></div></div>`;
+        } else {
+          target.innerHTML = `<div class="card" style="grid-column: span 12;"><p class="muted">No ${folder} yet. Add HTML files to <code>/${folder}</code>.</p></div>`;
+        }
       }
     } catch (e) {
       console.error(e);
