@@ -113,7 +113,7 @@
     <section class="synopsis" id="synopsis">
       <h2>Synopsis</h2>
       <p>
-        This project converts ASL fingerspelling into English text using structured 3D landmarks from MediaPipe and a compact Transformer. Each video frame is mapped to a fixed length feature vector built from both hands and selected upper body joints. A sequence model predicts letters with context and a special token to end words. The system was evaluated with character error rate and achieved about 0.36 on validation.
+        Sign language users communicate through hand shapes and movements, but most digital systems cannot understand these gestures. This research builds a system that automatically translates American Sign Language fingerspelling, where each hand shape represents a letter, into written English text. The system first tracks the 3D positions of hands and upper body joints in video using existing computer vision software. These position measurements are then fed into a neural network that understands sequences and context, learning to recognize individual letters and detect when words end. When tested on new videos, the system achieved a character error rate of approximately 0.36, meaning it correctly identified about 64% of characters. This represents a meaningful step toward making sign language more accessible through automated translation.
       </p>
       <div class="chips" aria-label="Key tags">
         <span class="chip">MediaPipe landmarks</span>
