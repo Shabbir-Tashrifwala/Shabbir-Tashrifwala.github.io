@@ -102,7 +102,7 @@
           <h1>Adversarially Robust Deepfake Detection</h1>
         </a>
         <div class="header-actions">
-          <a class="pill" href="assets/Adversarially%20Robust%20Deepfake%20Detection-FINAL.pdf" download>
+          <a class="pill" href="assets/Adversarially%20Robust%20Deepfake%20Detection-FINAL.pdf?disabled=1">
             Download the full report
             <small>(PDF)</small>
           </a>
@@ -119,7 +119,7 @@
     <section class="synopsis" id="synopsis">
       <h2>Synopsis</h2>
       <p>
-        This product delivers a compact deepfake detector that stays reliable under adversarial manipulation. It combines an EfficientNet backbone with a small Vision Transformer head, then hardens the model with a dual attacker training loop. One attacker is the classic PGD noise generator. The other is a tiny U-Net that learns to craft subtle, realistic perturbations shaped by total variation and frequency losses. We train on FaceForensics++ crops and evaluate cross-dataset on Celeb-DF v2. On clean data the robust model matches the baseline. Under combined learned attack plus compression it achieves a higher TPR at 1 percent FPR, which matters in high precision use cases. Grad-CAM analyses show the robust model attends to broader facial cues, not only razor thin edges, which aligns with its improved resilience.
+        This product delivers a compact deepfake detector that stays reliable under adversarial manipulation. It combines an EfficientNet backbone with a small Vision Transformer head, then hardens the model with a dual attacker training loop. One attacker is the classic PGD noise generator. The other is a tiny U-Net that learns to craft subtle, realistic perturbations shaped by total variation and frequency losses. We train on FaceForensics++ crops and evaluate cross-dataset on Celeb-DF v2. On clean data the robust model matches the baseline while maintaining ROC AUC and accuracy under compression-heavy attacks. Grad-CAM analyses show the robust model attends to broader facial cues, not only razor thin edges, which aligns with its improved resilience.
       </p>
       <div class="chips" aria-label="Key tags">
         <span class="chip">EfficientNet + ViT</span>
@@ -136,14 +136,14 @@
           <div class="small">Robust matches baseline on Celeb-DF v2</div>
         </div>
         <div class="stat">
-          <div class="small">TPR at 1% FPR, U-Net + JPEG</div>
-          <div class="k ok">2.9%</div>
-          <div class="small">Baseline 2.0% on the same setup</div>
+          <div class="small">Accuracy, U-Net + JPEG</div>
+          <div class="k ok">64.7%</div>
+          <div class="small">Baseline 62.5% on the same setup</div>
         </div>
         <div class="stat">
-          <div class="small">TPR at 1% FPR, U-Net + H.264-like</div>
-          <div class="k ok">3.0%</div>
-          <div class="small">Baseline 2.5% on the same setup</div>
+          <div class="small">Accuracy, U-Net + H.264-like</div>
+          <div class="k ok">65.4%</div>
+          <div class="small">Baseline 64.4% on the same setup</div>
         </div>
       </div>
     </section>
@@ -171,7 +171,7 @@
             Deepfake media is now highly realistic. Detectors trained only for accuracy on clean benchmarks can fail when an attacker adds tiny, crafted perturbations or when common compressions wash away local artifacts. This product focuses on resilience. The aim is to keep detection performance usable even when inputs are manipulated to evade the model or passed through lossy compression.
           </p>
           <div class="callout">
-            The north star metric is recall at very low false positive rates. We target higher TPR at 1 percent FPR under realistic attack plus compression.
+            The north star metric is preserving ROC AUC and accuracy when attacks meet compression, ensuring dependable screening performance.
           </div>
         </section>
 
@@ -244,7 +244,7 @@
         <section id="evaluation">
           <h2>6. Evaluation protocol</h2>
           <p>
-            We compare a baseline model trained on clean data and a robust model trained with the dual attacker loop. We test clean, JPEG quality 50, an H.264 like simulation, PGD white box, learned U-Net, and the combined U-Net plus compression settings. We report accuracy, ROC AUC, and TPR at 1 percent FPR. The last metric is the operational focus.
+            We compare a baseline model trained on clean data and a robust model trained with the dual attacker loop. We test clean, JPEG quality 50, an H.264 like simulation, PGD white box, learned U-Net, and the combined U-Net plus compression settings. We report accuracy and ROC AUC as the primary decision metrics.
           </p>
           <div class="chips">
             <span class="chip">Clean</span>
@@ -268,8 +268,6 @@
                 <th>Accuracy (Robust)</th>
                 <th>AUC (Base)</th>
                 <th>AUC (Robust)</th>
-                <th>TPR@1% FPR (Base)</th>
-                <th>TPR@1% FPR (Robust)</th>
               </tr>
             </thead>
             <tbody>
@@ -277,50 +275,43 @@
                 <td>Clean</td>
                 <td>0.624</td><td>0.617</td>
                 <td>0.678</td><td>0.676</td>
-                <td>1.4%</td><td>1.2%</td>
               </tr>
               <tr>
                 <td>JPEG(50)</td>
                 <td>0.625</td><td>0.641</td>
                 <td>0.672</td><td>0.681</td>
-                <td>2.3%</td><td>2.3%</td>
               </tr>
               <tr>
                 <td>H.264 like</td>
                 <td>0.636</td><td>0.661</td>
                 <td>0.693</td><td>0.703</td>
-                <td>2.2%</td><td>2.4%</td>
               </tr>
               <tr>
                 <td>PGD white box</td>
                 <td>0.467</td><td>0.476</td>
                 <td>0.460</td><td>0.483</td>
-                <td>0.1%</td><td>0.1%</td>
               </tr>
               <tr>
                 <td>Learned U-Net</td>
                 <td>0.619</td><td>0.607</td>
                 <td>0.675</td><td>0.674</td>
-                <td>1.5%</td><td>1.5%</td>
               </tr>
               <tr>
                 <td>U-Net + JPEG(50)</td>
                 <td>0.625</td><td>0.647</td>
                 <td>0.675</td><td>0.685</td>
-                <td>2.0%</td><td class="small">2.9% (higher)</td>
               </tr>
               <tr>
                 <td>U-Net + H.264 like</td>
                 <td>0.644</td><td>0.654</td>
                 <td>0.690</td><td>0.699</td>
-                <td>2.5%</td><td class="small">3.0% (higher)</td>
               </tr>
             </tbody>
           </table>
 
           <h3>7.2 In-domain performance on FF++ c23</h3>
           <p class="small">
-            Both models are near perfect on clean FF++ frames. Under compression the robust model shows a small edge in TPR at 1 percent FPR.
+            Both models are near perfect on clean FF++ frames. Under compression the robust model keeps accuracy competitive while sustaining ROC AUC.
           </p>
           <table aria-label="FF++ c23 summary">
             <thead>
@@ -330,8 +321,6 @@
                 <th>Accuracy (Robust)</th>
                 <th>AUC (Base)</th>
                 <th>AUC (Robust)</th>
-                <th>TPR@1% FPR (Base)</th>
-                <th>TPR@1% FPR (Robust)</th>
               </tr>
             </thead>
             <tbody>
@@ -339,25 +328,22 @@
                 <td>Clean</td>
                 <td>0.999</td><td>0.998</td>
                 <td>~1.000</td><td>~1.000</td>
-                <td>100%</td><td>100%</td>
               </tr>
               <tr>
                 <td>JPEG(50)</td>
                 <td>0.851</td><td>0.836</td>
                 <td>0.922</td><td>0.916</td>
-                <td>34.4%</td><td>38.7%</td>
               </tr>
               <tr>
                 <td>H.264 like</td>
                 <td>0.912</td><td>0.912</td>
                 <td>0.965</td><td>0.962</td>
-                <td>64.1%</td><td>67.1%</td>
               </tr>
             </tbody>
           </table>
 
           <div class="callout">
-            Takeaway: robustness training preserves clean accuracy and raises recall at strict operating points when attacks meet compression. This is the product's value in practice.
+            Takeaway: robustness training preserves clean accuracy while keeping ROC AUC and accuracy resilient when attacks meet compression.
           </div>
         </section>
 
@@ -384,7 +370,7 @@
           <h2>10. Adoption and usage</h2>
           <h3>Where this fits</h3>
           <ul>
-            <li>Media triage pipelines that operate at strict thresholds. The improved TPR at 1 percent FPR is valuable here.</li>
+            <li>Media triage pipelines that operate at strict thresholds and need accuracy and ROC AUC stability under compression.</li>
             <li>Content moderation pre-filters that run under compression noise.</li>
             <li>Analyst workflows that need compact models for quick iteration.</li>
           </ul>

@@ -101,7 +101,7 @@
         </a>
         <div class="header-actions">
           <!-- keep this href pointing to your report file -->
-          <a class="pill primary" href="../assets/Adversarially%20Robust%20Deepfake%20Detection-FINAL.pdf" download>
+          <a class="pill primary" href="../assets/Adversarially%20Robust%20Deepfake%20Detection-FINAL.pdf?disabled=1">
             Download the full report
             <small>(PDF)</small>
           </a>
@@ -121,7 +121,7 @@
     <section class="synopsis" id="synopsis">
       <h2>Synopsis</h2>
       <p>
-        This project investigates a compact deepfake detector that remains reliable under adversarial manipulation. We propose a hybrid architecture combining an EfficientNet backbone with a small Vision Transformer head and train it using a dual attacker regime. One attacker is projected gradient descent, while the other is a tiny U Net that learns subtle, realistic perturbations shaped by total variation and frequency losses. We train on FaceForensics plus plus crops and evaluate cross dataset on Celeb DF v2. On clean inputs, the robust model matches a standard baseline, and under a combined learned attack with compression it attains a higher true positive rate at 1 percent false positive rate, a regime critical for high precision scenarios. Grad CAM analyses further indicate that the robust model attends to broader facial cues rather than narrow edge artifacts, aligning with its improved resilience.
+        This project investigates a compact deepfake detector that remains reliable under adversarial manipulation. We propose a hybrid architecture combining an EfficientNet backbone with a small Vision Transformer head and train it using a dual attacker regime. One attacker is projected gradient descent, while the other is a tiny U Net that learns subtle, realistic perturbations shaped by total variation and frequency losses. We train on FaceForensics plus plus crops and evaluate cross dataset on Celeb DF v2. On clean inputs, the robust model matches a standard baseline while keeping ROC AUC and accuracy resilient under combined learned attack with compression. Grad CAM analyses further indicate that the robust model attends to broader facial cues rather than narrow edge artifacts, aligning with its improved resilience.
       </p>
 
       <!-- Metric boxes under Synopsis were removed -->
@@ -157,7 +157,7 @@
             Deepfake media is now highly realistic. Detectors trained only for accuracy on clean benchmarks can fail when an attacker adds tiny, crafted perturbations or when common compressions wash away local artifacts. This product focuses on resilience. The aim is to keep detection performance usable even when inputs are manipulated to evade the model or passed through lossy compression.
           </p>
           <div class="callout">
-            The north star metric is recall at very low false positive rates. We target higher TPR at 1 percent FPR under realistic attack plus compression.
+            The north star metric is maintaining ROC AUC and accuracy when attacks meet compression so that screening stays dependable.
           </div>
         </section>
 
@@ -230,7 +230,7 @@
         <section id="evaluation">
           <h2>6. Evaluation protocol</h2>
           <p>
-            We compare a baseline model trained on clean data and a robust model trained with the dual attacker loop. We test clean, JPEG quality 50, an H.264 like simulation, PGD white box, learned U Net, and the combined U Net plus compression settings. We report accuracy, ROC AUC, and TPR at 1 percent FPR. The last metric is the operational focus.
+            We compare a baseline model trained on clean data and a robust model trained with the dual attacker loop. We test clean, JPEG quality 50, an H.264 like simulation, PGD white box, learned U Net, and the combined U Net plus compression settings. We report accuracy and ROC AUC as the primary decision metrics.
           </p>
           <div class="chips">
             <span class="chip">Clean</span>
@@ -254,38 +254,64 @@
                 <th>Accuracy (Robust)</th>
                 <th>AUC (Base)</th>
                 <th>AUC (Robust)</th>
-                <th>TPR@1% FPR (Base)</th>
-                <th>TPR@1% FPR (Robust)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Clean</td><td>0.624</td><td>0.617</td><td>0.678</td><td>0.676</td><td>1.4%</td><td>1.2%</td>
+                <td>Clean</td>
+                <td>0.624</td>
+                <td>0.617</td>
+                <td>0.678</td>
+                <td>0.676</td>
               </tr>
               <tr>
-                <td>JPEG 50</td><td>0.625</td><td>0.641</td><td>0.672</td><td>0.681</td><td>2.3%</td><td>2.3%</td>
+                <td>JPEG 50</td>
+                <td>0.625</td>
+                <td>0.641</td>
+                <td>0.672</td>
+                <td>0.681</td>
               </tr>
               <tr>
-                <td>H.264 like</td><td>0.636</td><td>0.661</td><td>0.693</td><td>0.703</td><td>2.2%</td><td>2.4%</td>
+                <td>H.264 like</td>
+                <td>0.636</td>
+                <td>0.661</td>
+                <td>0.693</td>
+                <td>0.703</td>
               </tr>
               <tr>
-                <td>PGD white box</td><td>0.467</td><td>0.476</td><td>0.460</td><td>0.483</td><td>0.1%</td><td>0.1%</td>
+                <td>PGD white box</td>
+                <td>0.467</td>
+                <td>0.476</td>
+                <td>0.460</td>
+                <td>0.483</td>
               </tr>
               <tr>
-                <td>Learned U Net</td><td>0.619</td><td>0.607</td><td>0.675</td><td>0.674</td><td>1.5%</td><td>1.5%</td>
+                <td>Learned U Net</td>
+                <td>0.619</td>
+                <td>0.607</td>
+                <td>0.675</td>
+                <td>0.674</td>
               </tr>
               <tr>
-                <td>U Net + JPEG 50</td><td>0.625</td><td>0.647</td><td>0.675</td><td>0.685</td><td>2.0%</td><td>2.9%</td>
+                <td>U Net + JPEG 50</td>
+                <td>0.625</td>
+                <td>0.647</td>
+                <td>0.675</td>
+                <td>0.685</td>
               </tr>
               <tr>
-                <td>U Net + H.264 like</td><td>0.644</td><td>0.654</td><td>0.690</td><td>0.699</td><td>2.5%</td><td>3.0%</td>
+                <td>U Net + H.264 like</td>
+                <td>0.644</td>
+                <td>0.654</td>
+                <td>0.690</td>
+                <td>0.699</td>
               </tr>
             </tbody>
           </table>
 
           <h3>7.2 In domain performance on FF plus plus c23</h3>
           <p class="small">
-            Both models are near perfect on clean FF plus plus frames. Under compression the robust model shows a small edge in TPR at 1 percent FPR.
+            Both models are near perfect on clean FF plus plus frames. Under compression the robust model keeps accuracy competitive while sustaining ROC AUC.
           </p>
           <table aria-label="FF++ c23 summary">
             <thead>
@@ -295,19 +321,29 @@
                 <th>Accuracy (Robust)</th>
                 <th>AUC (Base)</th>
                 <th>AUC (Robust)</th>
-                <th>TPR@1% FPR (Base)</th>
-                <th>TPR@1% FPR (Robust)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Clean</td><td>0.999</td><td>0.998</td><td>~1.000</td><td>~1.000</td><td>100%</td><td>100%</td>
+                <td>Clean</td>
+                <td>0.999</td>
+                <td>0.998</td>
+                <td>~1.000</td>
+                <td>~1.000</td>
               </tr>
               <tr>
-                <td>JPEG 50</td><td>0.851</td><td>0.836</td><td>0.922</td><td>0.916</td><td>34.4%</td><td>38.7%</td>
+                <td>JPEG 50</td>
+                <td>0.851</td>
+                <td>0.836</td>
+                <td>0.922</td>
+                <td>0.916</td>
               </tr>
               <tr>
-                <td>H.264 like</td><td>0.912</td><td>0.912</td><td>0.965</td><td>0.962</td><td>64.1%</td><td>67.1%</td>
+                <td>H.264 like</td>
+                <td>0.912</td>
+                <td>0.912</td>
+                <td>0.965</td>
+                <td>0.962</td>
               </tr>
             </tbody>
           </table>
