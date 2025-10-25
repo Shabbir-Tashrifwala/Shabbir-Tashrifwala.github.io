@@ -107,8 +107,7 @@
     <section class="synopsis" id="synopsis">
       <h2>Synopsis</h2>
       <p>
-        This product predicts not just who will churn but when they are likely to churn, and then turns those time based risks into practical next steps for a retention team. It reframes churn as a time to event task, builds Kaplan Meier insights, trains a Cox proportional hazards model for interpretability and a gradient boosted survival model for accuracy, and evaluates them with survival specific metrics like C index, time dependent Brier score, and Lift at top K. The outputs feed a next best action matrix that recommends the right intervention at the right time, and the system ships with both a batch scoring job and a real time FastAPI service so the business can act on day one.
-      </p>
+        Most churn prediction systems only tell you which customers might leave, but not when they will leave or what to do about it. This product solves both problems by predicting not just who will churn but when each customer is likely to leave, then automatically recommending the best action to keep them. The system treats customer churn as a timing problem rather than a simple yes or no question. It analyzes when customers typically leave and what factors influence that timing, then uses this understanding to generate specific recommendations for retention teams. The system includes both automated daily processing for analyzing your entire customer base and instant predictions for individual customers through an API, so retention teams can take action immediately.
       <div class="chips" aria-label="Key tags">
         <span class="chip">Survival analysis</span>
         <span class="chip">Kaplan Meier</span>
