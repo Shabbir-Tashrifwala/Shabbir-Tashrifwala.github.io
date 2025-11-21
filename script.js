@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   function initCanvas() {
     w = canvas.width = window.innerWidth;
-    h = canvas.height = Math.max(window.innerHeight * 0.86, 500);
+    h = canvas.height = window.innerHeight;
     fontSize = 14;
     columns = Math.floor(w / fontSize);
     drops = Array.from({ length: columns }, () => Math.floor(Math.random() * -50));
