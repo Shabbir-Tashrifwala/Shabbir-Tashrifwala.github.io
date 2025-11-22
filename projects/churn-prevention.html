@@ -5,19 +5,23 @@
   <title>Churn Prevention Using Survival Analysis and Next-Best-Action Modeling</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="End to end churn prevention system that predicts when customers will churn with survival analysis and turns risk into concrete retention actions with a next best action engine. Includes batch scoring and a real time FastAPI service." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      /* Light, warm palette for a calm reading experience */
-      --bg:#fcfaf6;
-      --surface:#ffffff;
-      --ink:#0f172a;
-      --muted:#64748b;
-      --border:#e9e9ef;
-      --chip:#f5f6fb;
-      --callout:#eef2ff;
-      --primary:#2452ff;
-      --primary-hover:#1b40d6;
-      --ring: rgba(36, 82, 255, 0.18);
+      /* Dark Cyberpunk Theme matching main site */
+      --bg: #0f172a;           /* Deep Slate */
+      --surface: rgba(30, 41, 59, 0.6); /* Dark glass card */
+      --ink: #f1f5f9;          /* Off-white text */
+      --muted: #94a3b8;        /* Muted text */
+      --border: rgba(255, 255, 255, 0.1); /* Subtle border */
+      --chip: rgba(255, 255, 255, 0.05);  /* Dark chip */
+      --callout: rgba(45, 212, 191, 0.1); /* Teal tint */
+
+      /* Accents - matching the Matrix Teal */
+      --primary: #2dd4bf;       /* Teal 400 */
+      --primary-hover: #14b8a6;
+      --ring: rgba(45, 212, 191, 0.5);
+      --font-main: "Inter", system-ui, -apple-system, sans-serif;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -25,37 +29,46 @@
       margin:0;
       background:var(--bg);
       color:var(--ink);
-      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      font-family: var(--font-main);
+      line-height: 1.6;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
+      /* Background pattern from main site */
+      background-image:
+        radial-gradient(at 0% 0%, rgba(45, 212, 191, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(30, 41, 59, 0.5) 0px, transparent 50%);
+      background-attachment: fixed;
     }
-    a{color:var(--primary); text-decoration:none}
+    a{color:var(--primary); text-decoration:none; transition: color 0.2s;}
+    a:hover{color: var(--primary-hover);}
+
     .container{max-width:1100px; margin:0 auto; padding:24px}
     header{
       position:sticky; top:0; z-index:10;
-      backdrop-filter:saturate(1.1) blur(6px);
-      background:rgba(252,250,246,0.85);
+      backdrop-filter:blur(16px);
+      background:rgba(15, 23, 42, 0.85);
       border-bottom:1px solid var(--border);
     }
     .header-inner{display:flex; align-items:center; gap:14px; padding:10px 24px; max-width:1100px; margin:0 auto; flex-wrap:wrap}
-    .title{margin:0; font-size:18px}
+    .title{margin:0; font-size:18px; font-weight: 700;}
     .header-actions{display:flex; gap:10px; flex-wrap:wrap}
     .pill{
       display:inline-flex; align-items:center; gap:10px;
       padding:10px 16px; border-radius:999px; font-weight:600;
       border:1px solid transparent; box-shadow:0 8px 20px var(--ring);
       transition:transform .05s ease, background-color .2s ease, border-color .2s ease;
+      font-size: 0.9rem;
     }
-    .pill.primary{background:var(--primary); color:#fff}
-    .pill.primary:hover{background:var(--primary-hover); transform:translateY(-1px)}
-    .pill.ghost{background:#fff; color:var(--ink); border-color:var(--border); box-shadow:none}
-    .pill.ghost:hover{background:#f8f9ff; transform:translateY(-1px); border-color:#d9dce3}
+    .pill.primary{background:linear-gradient(135deg, var(--primary-hover), var(--primary)); color:#0f172a; text-shadow:none;}
+    .pill.primary:hover{background:var(--primary); transform:translateY(-1px)}
+    .pill.ghost{background:transparent; color:var(--ink); border-color:var(--border); box-shadow:none}
+    .pill.ghost:hover{background:rgba(255,255,255,0.05); transform:translateY(-1px); border-color:var(--primary); color:var(--primary)}
 
     main{padding:24px}
-    section{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px}
-    h2{margin:0 0 12px; font-size:24px}
-    h3{margin:16px 0 8px; font-size:18px}
-    p{margin:10px 0}
+    section{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; backdrop-filter: blur(12px);}
+    h2{margin:0 0 12px; font-size:24px; font-weight: 700; color: var(--ink);}
+    h3{margin:16px 0 8px; font-size:18px; font-weight: 600; color: #fff;}
+    p{margin:10px 0; color: var(--muted);}
     .small{font-size:13px; color:var(--muted)}
     .synopsis h2{margin:0 0 10px 0}
     .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
@@ -67,19 +80,21 @@
       position:sticky; top:76px; align-self:start;
       background:var(--surface); border:1px solid var(--border);
       border-radius:14px; padding:14px;
+      backdrop-filter: blur(12px);
     }
     nav.toc h3{margin:6px 6px 10px 6px; font-size:13px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase}
-    nav.toc a{display:block; color:var(--ink); padding:8px 10px; border-radius:10px; font-size:14px; border:1px solid transparent}
-    nav.toc a:hover{background:#f6f7ff; border-color:var(--border)}
+    nav.toc a{display:block; color:var(--muted); padding:8px 10px; border-radius:10px; font-size:14px; border:1px solid transparent; transition: all 0.2s;}
+    nav.toc a:hover{background:rgba(255,255,255,0.05); border-color:var(--border); color: var(--ink);}
 
-    .callout{padding:12px 14px; border-left:4px solid var(--primary); background:var(--callout); border-radius:10px}
-    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; margin:10px 0}
-    thead th{background:#f6f7fb; color:var(--muted); font-weight:600; text-align:left; padding:10px; border-bottom:1px solid var(--border)}
-    tbody td{padding:10px; border-bottom:1px solid var(--border)}
-    tbody tr:hover td{background:#fafbff}
+    .callout{padding:12px 14px; border-left:4px solid var(--primary); background:var(--callout); border-radius:10px; color: var(--ink);}
+    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:12px; margin:10px 0; border: 1px solid var(--border);}
+    thead th{background:rgba(255,255,255,0.05); color:var(--muted); font-weight:600; text-align:left; padding:10px; border-bottom:1px solid var(--border)}
+    tbody td{padding:10px; border-bottom:1px solid var(--border); color: var(--muted);}
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td{background:rgba(255,255,255,0.05)}
 
     footer{color:var(--muted); text-align:center; padding:36px 0}
-    .badge{display:inline-flex; align-items:center; gap:8px; background:#f6f7fb; padding:8px 12px; border-radius:12px; border:1px solid var(--border)}
+    .badge{display:inline-flex; align-items:center; gap:8px; background:var(--chip); padding:8px 12px; border-radius:12px; border:1px solid var(--border); color: var(--muted);}
   </style>
 </head>
 <body>
