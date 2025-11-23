@@ -27,6 +27,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 75px; /* Offset for sticky nav */
 }
 
 body {
@@ -232,19 +233,11 @@ a {
 }
 
 /* Sections */
-.route { display: none; }
-.route.active {
-  display: block;
-  animation: fadeIn 0.6s ease-out forwards;
-}
+/* Scrolling layout: show all sections */
+.route { display: block; }
 
-.hero.active {
+.hero {
   display: flex;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .section {
