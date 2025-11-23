@@ -33,34 +33,20 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   draw();
 
-  // ===== Router (no cross-section scrolling) =====
-  const routes = Array.from(document.querySelectorAll('.route'));
+  // ===== Brand Visibility on Scroll =====
   const brandEl = document.querySelector('.brand');
-  function setRoute(){
-    let hash = location.hash || '#home';
-    if (!document.querySelector(hash)) hash = '#home';
-    routes.forEach(el => el.classList.remove('active'));
-    const active = document.querySelector(hash);
-    if (active) active.classList.add('active');
-    const onHome = (hash === '#home');
-    document.body.style.overflow = onHome ? 'hidden' : 'auto';
-    brandEl.style.opacity = onHome ? 0 : 1;
-    brandEl.style.pointerEvents = onHome ? 'none' : 'auto';
-    window.scrollTo(0,0);
+  function updateBrand() {
+    // Show brand name in nav only when user has scrolled down a bit
+    if (window.scrollY > 100) {
+      brandEl.style.opacity = '1';
+      brandEl.style.pointerEvents = 'auto';
+    } else {
+      brandEl.style.opacity = '0';
+      brandEl.style.pointerEvents = 'none';
+    }
   }
-  setRoute();
-  window.addEventListener('hashchange', setRoute);
-
-  // ===== Nav & CTA buttons --> hash =====
-  document.querySelectorAll('.menu a, .actions a').forEach(a => {
-    a.addEventListener('click', (e)=>{
-      const target = a.getAttribute('href');
-      if (target && target.startsWith('#')) {
-        e.preventDefault();
-        location.hash = target;
-      }
-    });
-  });
+  window.addEventListener('scroll', updateBrand);
+  updateBrand();
 
   // ===== Contact form submission =====
   const form = document.getElementById('contact-form');
