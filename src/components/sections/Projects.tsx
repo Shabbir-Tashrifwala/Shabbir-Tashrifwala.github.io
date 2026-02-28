@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -17,6 +17,7 @@ const projects = [
     accent: "#00F0FF",
     icon: "◈",
     stat: "Top-tier robustness",
+    href: "/projects/Deepfake-detection-html-1.html",
   },
   {
     id: 2,
@@ -27,6 +28,7 @@ const projects = [
     accent: "#00F0FF",
     icon: "◉",
     stat: "Real-time inference",
+    href: "/projects/ASL-fingerspelling-text.html",
   },
   {
     id: 3,
@@ -37,6 +39,7 @@ const projects = [
     accent: "#00F0FF",
     icon: "◎",
     stat: "Predictive analytics",
+    href: "/projects/churn-prevention.html",
   },
 ];
 
@@ -80,9 +83,10 @@ function TiltCard({ project, index }: { project: typeof projects[0]; index: numb
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         className="relative h-full rounded-sm overflow-hidden group"
       >
-        {/* Card body */}
-        <div
-          className="relative h-full glass p-6 flex flex-col gap-4 border border-cyber-teal/10 group-hover:border-cyber-teal/30 transition-all duration-500"
+        {/* Clickable card body */}
+        <a
+          href={project.href}
+          className="block relative h-full glass p-6 flex flex-col gap-4 border border-cyber-teal/10 group-hover:border-cyber-teal/40 transition-all duration-500 cursor-pointer"
           style={{
             background: "rgba(10, 22, 40, 0.7)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)",
@@ -100,34 +104,24 @@ function TiltCard({ project, index }: { project: typeof projects[0]; index: numb
             }}
           />
 
-          {/* Video placeholder */}
-          <div className="relative w-full h-36 bg-cyber-navy-mid rounded-sm overflow-hidden border border-cyber-teal/5 flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl text-cyber-teal/20">{project.icon}</span>
-            </div>
-            <div className="absolute inset-0 cyber-grid opacity-40" />
-            <div
-              className="absolute bottom-0 left-0 right-0 h-px"
-              style={{
-                background: "linear-gradient(90deg, transparent, rgba(0,240,255,0.4), transparent)",
-              }}
-            />
-            {/* Placeholder text */}
-            <span className="font-mono text-xs text-slate-600 tracking-widest uppercase z-10">
-              [ Video Preview ]
+          {/* Icon + stat header */}
+          <div className="flex items-center justify-between">
+            <span
+              className="text-3xl"
+              style={{ color: "rgba(0,240,255,0.3)", filter: "drop-shadow(0 0 8px rgba(0,240,255,0.4))" }}
+            >
+              {project.icon}
+            </span>
+            <span className="font-mono text-cyber-teal/50 text-xs tracking-widest uppercase">
+              {project.stat}
             </span>
           </div>
 
           {/* Header */}
           <div>
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="text-white font-bold text-base leading-tight group-hover:text-cyber-teal transition-colors duration-300">
-                {project.title}
-              </h3>
-            </div>
-            <span className="font-mono text-cyber-teal/60 text-xs tracking-widest uppercase">
-              {project.stat}
-            </span>
+            <h3 className="text-white font-bold text-base leading-tight group-hover:text-cyber-teal transition-colors duration-300">
+              {project.title}
+            </h3>
           </div>
 
           {/* Description */}
@@ -145,12 +139,22 @@ function TiltCard({ project, index }: { project: typeof projects[0]; index: numb
             ))}
           </div>
 
+          {/* View project link indicator */}
+          <div className="flex items-center gap-2 pt-1 border-t border-cyber-teal/10 group-hover:border-cyber-teal/30 transition-colors duration-300">
+            <span className="font-mono text-xs text-cyber-teal/50 group-hover:text-cyber-teal transition-colors duration-300 tracking-widest uppercase">
+              View project
+            </span>
+            <span className="text-cyber-teal/40 group-hover:text-cyber-teal group-hover:translate-x-1 transition-all duration-300 text-xs">
+              →
+            </span>
+          </div>
+
           {/* Bottom accent bar */}
           <div
             className="absolute bottom-0 left-0 w-0 h-px group-hover:w-full transition-all duration-500"
             style={{ background: "linear-gradient(90deg, transparent, #00F0FF, transparent)" }}
           />
-        </div>
+        </a>
       </motion.div>
     </motion.div>
   );
@@ -180,7 +184,6 @@ export default function Projects() {
       });
     });
 
-    // Heading animation
     if (headingRef.current) {
       gsap.from(headingRef.current, {
         opacity: 0,
@@ -204,7 +207,6 @@ export default function Projects() {
       ref={sectionRef}
       className="relative py-32 bg-cyber-navy overflow-hidden"
     >
-      {/* Background grid */}
       <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" />
 
       <div className="section-container relative z-10">

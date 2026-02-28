@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XPW0Q1S0D9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XPW0Q1S0D9');
+  </script>
+  <meta charset="utf-8" />
+  <title>Adversarially Robust Deepfake Detection — Shabbir Tashrifwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A compact, adversarially hardened deepfake detector built with a hybrid EfficientNet plus Vision Transformer architecture and a dual-attacker training protocol." />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:        #050A18;
+      --navy-light:  #0A1628;
+      --navy-mid:    #0D1F3C;
+      --teal:        #00F0FF;
+      --teal-dim:    rgba(0,240,255,0.15);
+      --teal-faint:  rgba(0,240,255,0.06);
+      --ink:         #f1f5f9;
+      --muted:       #94a3b8;
+      --border:      rgba(0,240,255,0.1);
+      --border-h:    rgba(0,240,255,0.3);
+      --glass:       rgba(10,22,40,0.7);
+      --mono:        "JetBrains Mono", monospace;
+      --sans:        "Inter", system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--navy);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(0,240,255,0.04) 0, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0,240,255,0.03) 0, transparent 50%);
+      background-attachment: fixed;
+    }
+    /* Grid overlay */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.6;
+    }
+
+    a { color: var(--teal); text-decoration: none; transition: opacity .2s; }
+    a:hover { opacity: .75; }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ── Header ── */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(5,10,24,0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 14px 24px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .brand-logo {
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      color: var(--teal); letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none;
+      text-shadow: 0 0 12px rgba(0,240,255,0.6);
+      flex-shrink: 0;
+    }
+    .brand-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .brand h1 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 2px; font-family: var(--mono);
+      font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid;
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .btn-ghost {
+      border-color: var(--border); color: var(--muted); background: transparent;
+    }
+    .btn-ghost:hover {
+      border-color: var(--teal); color: var(--teal);
+      background: var(--teal-faint);
+      box-shadow: 0 0 16px rgba(0,240,255,0.12);
+      opacity: 1;
+    }
+    .btn-primary {
+      border-color: var(--teal); color: var(--navy); background: var(--teal);
+      font-weight: 800;
+    }
+    .btn-primary:hover {
+      background: rgba(0,240,255,0.85);
+      box-shadow: 0 0 20px rgba(0,240,255,0.4);
+      opacity: 1;
+    }
+
+    /* ── Layout ── */
+    main { padding: 32px 0 64px; }
+
+    .synopsis-card {
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px;
+      padding: 28px; margin-bottom: 24px;
+      transition: border-color .3s;
+    }
+    .synopsis-card:hover { border-color: var(--border-h); }
+
+    .section-label {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+    }
+    .section-label span.line { height: 1px; width: 32px; background: rgba(0,240,255,0.4); }
+    .section-label span.text {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
+      text-transform: uppercase; color: var(--teal);
+    }
+
+    h2 { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+    h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin: 20px 0 8px; }
+    p  { color: var(--muted); margin-bottom: 12px; font-size: 15px; }
+    ul, ol { padding-left: 20px; }
+    li { color: var(--muted); margin-bottom: 6px; font-size: 15px; }
+    li strong { color: var(--ink); }
+
+    .grid { display: grid; gap: 20px; }
+    @media(min-width: 980px) { .grid { grid-template-columns: 260px 1fr; } }
+
+    /* ── TOC ── */
+    nav.toc {
+      position: sticky; top: 72px; align-self: start;
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px; padding: 16px;
+    }
+    .toc-title {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    nav.toc a {
+      display: block; color: var(--muted); padding: 7px 10px; border-radius: 2px;
+      font-size: 13px; border: 1px solid transparent; transition: all .2s;
+      text-decoration: none;
+    }
+    nav.toc a:hover { background: var(--teal-faint); border-color: var(--border); color: var(--ink); opacity: 1; }
+
+    /* ── Content sections ── */
+    .content-section {
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px;
+      padding: 24px; margin-bottom: 16px;
+      transition: border-color .3s;
+    }
+    .content-section:hover { border-color: var(--border-h); }
+
+    /* ── Chips ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .chip {
+      font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 2px;
+      background: var(--teal-faint); border: 1px solid rgba(0,240,255,0.15);
+      color: rgba(0,240,255,0.7); letter-spacing: .05em;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      padding: 14px 16px; border-left: 3px solid var(--teal);
+      background: var(--teal-dim); border-radius: 0 2px 2px 0;
+      margin: 14px 0; color: var(--ink); font-size: 14px;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      border-radius: 2px; margin: 14px 0; border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    thead th {
+      background: rgba(0,240,255,0.04); color: var(--teal); font-family: var(--mono);
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+    }
+    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--teal-faint); }
+
+    /* ── Decorations ── */
+    .corner-tl { position: fixed; top: 80px; left: 16px; width: 24px; height: 24px; border-top: 1px solid rgba(0,240,255,0.2); border-left: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
+    .corner-br { position: fixed; bottom: 16px; right: 16px; width: 24px; height: 24px; border-bottom: 1px solid rgba(0,240,255,0.2); border-right: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
+  </style>
+</head>
+<body>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <a class="brand-logo" href="/">ST</a>
+        <div class="brand-sep"></div>
+        <h1>Adversarially Robust Deepfake Detection</h1>
+      </div>
+      <div class="header-actions">
+        <a class="btn btn-ghost" href="https://github.com/Shabbir-Tashrifwala/robust-deepfake-detector" target="_blank" rel="noreferrer">
+          ⌥ GitHub
+        </a>
+        <a class="btn btn-ghost" href="/#projects">
+          ← Back
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Synopsis -->
+      <div class="synopsis-card">
+        <div class="section-label">
+          <span class="line"></span>
+          <span class="text">Synopsis</span>
+        </div>
+        <h2>Adversarially Robust Deepfake Detection</h2>
+        <p>
+          Modern deepfake detection systems have a serious weakness: they can be fooled by tiny, invisible changes made to videos. This project tackles the challenge of building detectors that remain reliable even when attackers deliberately try to trick them. Our approach involves training a deepfake detector by constantly attacking it during the learning phase — similar to how vaccines work. We use two complementary attacks during training: PGD (which finds maximally damaging pixel-level modifications) and a learned U-Net attacker that generates subtle, spatially-coherent perturbations. Our results show the detector maintains much better accuracy on attacked and compressed videos, while focusing on natural facial features across the full face rather than brittle local artifacts.
+        </p>
+        <div class="chips">
+          <span class="chip">EfficientNet + ViT</span>
+          <span class="chip">PGD + Learned U-Net Attacker</span>
+          <span class="chip">TV &amp; Frequency Constraints</span>
+          <span class="chip">FaceForensics++ Train</span>
+          <span class="chip">Celeb-DF v2 Test</span>
+          <span class="chip">Grad-CAM Explainability</span>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- TOC -->
+        <nav class="toc" aria-label="Table of contents">
+          <div class="toc-title">Contents</div>
+          <a href="#problem">1. Problem statement</a>
+          <a href="#solution">2. Solution overview</a>
+          <a href="#architecture">3. Architecture</a>
+          <a href="#attackers">4. Adversarial training</a>
+          <a href="#data">5. Data pipeline</a>
+          <a href="#evaluation">6. Evaluation</a>
+          <a href="#results">7. Results</a>
+          <a href="#explain">8. Explainability</a>
+          <a href="#limits">9. Limits &amp; future work</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div>
+          <div class="content-section" id="problem">
+            <div class="section-label"><span class="line"></span><span class="text">01</span></div>
+            <h2>Problem statement</h2>
+            <p>
+              Deepfake media is now highly realistic. Detectors trained only for accuracy on clean benchmarks fail when an attacker adds tiny, crafted perturbations or when common compressions wash away local artifacts. This project focuses on resilience — keeping detection performance usable even when inputs are manipulated or passed through lossy compression.
+            </p>
+            <div class="callout">
+              The north-star metric is maintaining ROC AUC and accuracy when attacks meet compression, so that screening stays dependable.
+            </div>
+          </div>
+
+          <div class="content-section" id="solution">
+            <div class="section-label"><span class="line"></span><span class="text">02</span></div>
+            <h2>Solution overview</h2>
+            <p>
+              We harden a compact hybrid detector through a game between the model and two complementary attackers. The network faces PGD noise and a learned U-Net attacker that produces realistic, spatially smooth, compression-resilient patterns. The U-Net is leashed by total variation loss to reduce high-frequency speckle and by a frequency-domain loss that discourages very low-frequency energy, forcing the detector to learn more stable cues.
+            </p>
+            <div class="chips">
+              <span class="chip">Compact model</span>
+              <span class="chip">Dual-attacker training</span>
+              <span class="chip">Compression-aware robustness</span>
+            </div>
+          </div>
+
+          <div class="content-section" id="architecture">
+            <div class="section-label"><span class="line"></span><span class="text">03</span></div>
+            <h2>Architecture</h2>
+            <h3>EfficientViT detector</h3>
+            <p>
+              The backbone is EfficientNet-B0 used as a feature extractor outputting a 7×7×1280 map for a 224×224 face crop. We reshape this grid into 49 tokens, prepend a CLS token, add learnable positions, and pass the sequence through a small Transformer encoder with 4 layers and 4 heads. The CLS output goes into a light MLP head for binary classification.
+            </p>
+            <div class="chips">
+              <span class="chip">EfficientNet-B0 features</span>
+              <span class="chip">ViT encoder, 4 layers</span>
+              <span class="chip">MLP head</span>
+            </div>
+            <h3>Why hybrid?</h3>
+            <p>
+              CNNs capture local texture tells like edge inconsistencies. Transformers capture long-range relations like lighting agreement between forehead and jaw. Together they cover both local and global cues with a small parameter budget.
+            </p>
+          </div>
+
+          <div class="content-section" id="attackers">
+            <div class="section-label"><span class="line"></span><span class="text">04</span></div>
+            <h2>Adversarial training</h2>
+            <h3>PGD attacker</h3>
+            <p>L∞ PGD with ε = 8/255, step = 2/255, 10 iterations with random start — gives a strong baseline adversary.</p>
+            <h3>Learned U-Net attacker</h3>
+            <p>A tiny U-Net takes the clean face crop and outputs a perturbation δ bounded in L∞ by ε through a tanh gate. The U-Net tries to maximize detector loss while obeying realism constraints.</p>
+            <h3>Realism constraints</h3>
+            <ul>
+              <li><strong>Total variation loss</strong> promotes spatial smoothness, avoiding speckle-like artifacts.</li>
+              <li><strong>Frequency loss</strong> penalizes very low-frequency energy, nudging the attacker toward mid-to-high frequency patterns that survive compression.</li>
+            </ul>
+            <div class="callout">
+              The arms race pushes the detector to stop over-relying on a single brittle cue and to combine broader evidence across the face.
+            </div>
+          </div>
+
+          <div class="content-section" id="data">
+            <div class="section-label"><span class="line"></span><span class="text">05</span></div>
+            <h2>Data pipeline</h2>
+            <p>
+              Frames extracted from FaceForensics++ c23 and Celeb-DF v2. Faces detected with MTCNN, aligned and cropped to 224×224. Training uses FF++ frames; evaluation uses Celeb-DF v2 for cross-dataset testing. Preprocessing: resize + ImageNet normalization. Training on T4 GPU with AMP.
+            </p>
+            <div class="chips">
+              <span class="chip">FF++ c23 train</span>
+              <span class="chip">Celeb-DF v2 test</span>
+              <span class="chip">MTCNN face crops</span>
+              <span class="chip">AMP enabled</span>
+            </div>
+          </div>
+
+          <div class="content-section" id="evaluation">
+            <div class="section-label"><span class="line"></span><span class="text">06</span></div>
+            <h2>Evaluation protocol</h2>
+            <p>
+              We compare a baseline (trained on clean data) vs. a robust model (dual-attacker loop). Test conditions: clean, JPEG-50, H.264-like, PGD white-box, learned U-Net, and U-Net + compression. Primary metrics: accuracy and ROC AUC.
+            </p>
+            <div class="chips">
+              <span class="chip">Clean</span>
+              <span class="chip">JPEG-50</span>
+              <span class="chip">H.264-like</span>
+              <span class="chip">PGD</span>
+              <span class="chip">Learned U-Net</span>
+              <span class="chip">U-Net + compression</span>
+            </div>
+          </div>
+
+          <div class="content-section" id="results">
+            <div class="section-label"><span class="line"></span><span class="text">07</span></div>
+            <h2>Results</h2>
+            <h3>Cross-domain — Celeb-DF v2</h3>
+            <table>
+              <thead>
+                <tr><th>Scenario</th><th>Acc (Base)</th><th>Acc (Robust)</th><th>AUC (Base)</th><th>AUC (Robust)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Clean</td><td>0.624</td><td>0.617</td><td>0.678</td><td>0.676</td></tr>
+                <tr><td>JPEG-50</td><td>0.625</td><td>0.641</td><td>0.672</td><td>0.681</td></tr>
+                <tr><td>H.264-like</td><td>0.636</td><td>0.661</td><td>0.693</td><td>0.703</td></tr>
+                <tr><td>PGD white-box</td><td>0.467</td><td>0.476</td><td>0.460</td><td>0.483</td></tr>
+                <tr><td>Learned U-Net</td><td>0.619</td><td>0.607</td><td>0.675</td><td>0.674</td></tr>
+                <tr><td>U-Net + JPEG-50</td><td>0.625</td><td>0.647</td><td>0.675</td><td>0.685</td></tr>
+                <tr><td>U-Net + H.264-like</td><td>0.644</td><td>0.654</td><td>0.690</td><td>0.699</td></tr>
+              </tbody>
+            </table>
+            <h3>In-domain — FF++ c23</h3>
+            <table>
+              <thead>
+                <tr><th>Scenario</th><th>Acc (Base)</th><th>Acc (Robust)</th><th>AUC (Base)</th><th>AUC (Robust)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Clean</td><td>0.999</td><td>0.998</td><td>~1.000</td><td>~1.000</td></tr>
+                <tr><td>JPEG-50</td><td>0.851</td><td>0.836</td><td>0.922</td><td>0.916</td></tr>
+                <tr><td>H.264-like</td><td>0.912</td><td>0.912</td><td>0.965</td><td>0.962</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="content-section" id="explain">
+            <div class="section-label"><span class="line"></span><span class="text">08</span></div>
+            <h2>Explainability</h2>
+            <p>
+              Grad-CAM comparisons show the baseline often fires on sharp borders like jawlines or face boundaries. The robust model spreads attention over cheeks and forehead, with less spill to background — consistent with adversarial training discouraging single-cue dependence and pushing attention toward cues harder to scrub with edits or compression.
+            </p>
+            <p>
+              In frequency space: baseline attention aligns with very high-frequency details. The robust model raises sensitivity to mid-frequency patterns and smooth shading consistency, which are more durable under compression and against small edits.
+            </p>
+          </div>
+
+          <div class="content-section" id="limits">
+            <div class="section-label"><span class="line"></span><span class="text">09</span></div>
+            <h2>Limits &amp; future work</h2>
+            <ul>
+              <li>Strong PGD still hurts both models at this resolution. Larger models or stronger schedules could help.</li>
+              <li>Cross-dataset AUC in the high 0.6s shows that generalizing to harder fakes remains challenging.</li>
+              <li>Temporal attacks are not yet modeled — extending realism constraints to video time could improve resilience.</li>
+            </ul>
+          </div>
+
+          <div class="content-section" id="faq">
+            <div class="section-label"><span class="line"></span><span class="text">FAQ</span></div>
+            <h2>FAQ</h2>
+            <h3>Why a U-Net attacker rather than only PGD?</h3>
+            <p>PGD is strong but often looks like fine noise. A learned U-Net generates spatially coherent patterns that better mimic cosmetic tweaks, reducing overfitting to one attack style.</p>
+            <h3>Why TV and frequency constraints?</h3>
+            <p>TV lowers speckle for plausibility. Penalizing very low-frequency energy avoids broad washes flattened by compression. Together they push the attacker into the band where compression is less destructive.</p>
+            <h3>Does the robust model hurt clean accuracy?</h3>
+            <p>On clean FF++ and clean Celeb-DF v2, robust accuracy and AUC match the baseline within noise. The advantage shows under attack and compression — where it matters operationally.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

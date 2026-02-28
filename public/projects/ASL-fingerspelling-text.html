@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XPW0Q1S0D9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XPW0Q1S0D9');
+  </script>
+  <meta charset="utf-8" />
+  <title>Transformer-Based ASL Fingerspelling to Text — Shabbir Tashrifwala</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Real-time ASL fingerspelling to text using MediaPipe landmarks and a Transformer encoder-decoder. CER ≈ 0.36 on validation." />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:        #050A18;
+      --navy-light:  #0A1628;
+      --navy-mid:    #0D1F3C;
+      --teal:        #00F0FF;
+      --teal-dim:    rgba(0,240,255,0.15);
+      --teal-faint:  rgba(0,240,255,0.06);
+      --ink:         #f1f5f9;
+      --muted:       #94a3b8;
+      --border:      rgba(0,240,255,0.1);
+      --border-h:    rgba(0,240,255,0.3);
+      --glass:       rgba(10,22,40,0.7);
+      --mono:        "JetBrains Mono", monospace;
+      --sans:        "Inter", system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--navy);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(0,240,255,0.04) 0, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0,240,255,0.03) 0, transparent 50%);
+      background-attachment: fixed;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.6;
+    }
+    a { color: var(--teal); text-decoration: none; transition: opacity .2s; }
+    a:hover { opacity: .75; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(5,10,24,0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 14px 24px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .brand-logo {
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      color: var(--teal); letter-spacing: .2em; text-transform: uppercase;
+      text-decoration: none;
+      text-shadow: 0 0 12px rgba(0,240,255,0.6);
+      flex-shrink: 0;
+    }
+    .brand-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .brand h1 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .header-actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 2px; font-family: var(--mono);
+      font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+      text-decoration: none; border: 1px solid;
+      transition: all .25s; cursor: pointer;
+    }
+    .btn-ghost { border-color: var(--border); color: var(--muted); background: transparent; }
+    .btn-ghost:hover {
+      border-color: var(--teal); color: var(--teal); background: var(--teal-faint);
+      box-shadow: 0 0 16px rgba(0,240,255,0.12); opacity: 1;
+    }
+
+    main { padding: 32px 0 64px; }
+
+    .synopsis-card {
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px;
+      padding: 28px; margin-bottom: 24px;
+      transition: border-color .3s;
+    }
+    .synopsis-card:hover { border-color: var(--border-h); }
+
+    .section-label { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .section-label span.line { height: 1px; width: 32px; background: rgba(0,240,255,0.4); }
+    .section-label span.text { font-family: var(--mono); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--teal); }
+
+    h2 { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
+    h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin: 20px 0 8px; }
+    p  { color: var(--muted); margin-bottom: 12px; font-size: 15px; }
+    ul, ol { padding-left: 20px; }
+    li { color: var(--muted); margin-bottom: 6px; font-size: 15px; }
+    li strong { color: var(--ink); }
+
+    .grid { display: grid; gap: 20px; }
+    @media(min-width: 980px) { .grid { grid-template-columns: 260px 1fr; } }
+
+    nav.toc {
+      position: sticky; top: 72px; align-self: start;
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px; padding: 16px;
+    }
+    .toc-title {
+      font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    nav.toc a {
+      display: block; color: var(--muted); padding: 7px 10px; border-radius: 2px;
+      font-size: 13px; border: 1px solid transparent; transition: all .2s;
+      text-decoration: none;
+    }
+    nav.toc a:hover { background: var(--teal-faint); border-color: var(--border); color: var(--ink); opacity: 1; }
+
+    .content-section {
+      background: var(--glass); border: 1px solid var(--border);
+      backdrop-filter: blur(12px); border-radius: 2px;
+      padding: 24px; margin-bottom: 16px;
+      transition: border-color .3s;
+    }
+    .content-section:hover { border-color: var(--border-h); }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .chip {
+      font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 2px;
+      background: var(--teal-faint); border: 1px solid rgba(0,240,255,0.15);
+      color: rgba(0,240,255,0.7); letter-spacing: .05em;
+    }
+    .callout {
+      padding: 14px 16px; border-left: 3px solid var(--teal);
+      background: var(--teal-dim); border-radius: 0 2px 2px 0;
+      margin: 14px 0; color: var(--ink); font-size: 14px;
+    }
+    table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      border-radius: 2px; margin: 14px 0; border: 1px solid var(--border); overflow: hidden;
+    }
+    thead th {
+      background: rgba(0,240,255,0.04); color: var(--teal); font-family: var(--mono);
+      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+      text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+    }
+    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--teal-faint); }
+
+    .corner-tl { position: fixed; top: 80px; left: 16px; width: 24px; height: 24px; border-top: 1px solid rgba(0,240,255,0.2); border-left: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
+    .corner-br { position: fixed; bottom: 16px; right: 16px; width: 24px; height: 24px; border-bottom: 1px solid rgba(0,240,255,0.2); border-right: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
+  </style>
+</head>
+<body>
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <a class="brand-logo" href="/">ST</a>
+        <div class="brand-sep"></div>
+        <h1>Transformer-Based ASL Fingerspelling to Text</h1>
+      </div>
+      <div class="header-actions">
+        <a class="btn btn-ghost" href="https://github.com/Shabbir-Tashrifwala/ASL-Fingerspelling-to-Text" target="_blank" rel="noreferrer">
+          ⌥ GitHub
+        </a>
+        <a class="btn btn-ghost" href="/#projects">
+          ← Back
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Synopsis -->
+      <div class="synopsis-card">
+        <div class="section-label">
+          <span class="line"></span>
+          <span class="text">Synopsis</span>
+        </div>
+        <h2>Transformer-Based ASL Fingerspelling to Text</h2>
+        <p>
+          Sign language users communicate through hand shapes and movements, but most digital systems cannot understand these gestures. This system automatically translates American Sign Language fingerspelling — where each hand shape represents a letter — into written English text. It first tracks the 3D positions of hands and upper body joints in video using MediaPipe, then feeds these landmark sequences into a Transformer encoder-decoder that recognizes individual letters and detects word boundaries. Validated at a character error rate of ≈ 0.36 (64% character accuracy), representing a meaningful step toward automated sign language accessibility.
+        </p>
+        <div class="chips">
+          <span class="chip">MediaPipe Landmarks</span>
+          <span class="chip">Transformer Encoder-Decoder</span>
+          <span class="chip">CER ≈ 0.36 (validation)</span>
+          <span class="chip">Sequence Normalization</span>
+          <span class="chip">Greedy Decoding</span>
+        </div>
+      </div>
+
+      <div class="grid">
+        <nav class="toc" aria-label="Table of contents">
+          <div class="toc-title">Contents</div>
+          <a href="#problem">1. Problem &amp; users</a>
+          <a href="#solution">2. Solution overview</a>
+          <a href="#data">3. Data &amp; features</a>
+          <a href="#normalization">4. Normalization</a>
+          <a href="#architecture">5. Architecture</a>
+          <a href="#training">6. Training</a>
+          <a href="#metric">7. Metric</a>
+          <a href="#results">8. Results</a>
+          <a href="#limits">9. Limits &amp; next steps</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div>
+          <div class="content-section" id="problem">
+            <div class="section-label"><span class="line"></span><span class="text">01</span></div>
+            <h2>Problem &amp; users</h2>
+            <p>
+              Fingerspelling conveys names and terms without dedicated signs. Recognition is difficult due to fast transitions and co-articulation between letters. The goal is letter-accurate transcription with clear handling of similar handshapes and consistent preprocessing across signers and cameras.
+            </p>
+          </div>
+
+          <div class="content-section" id="solution">
+            <div class="section-label"><span class="line"></span><span class="text">02</span></div>
+            <h2>Solution overview</h2>
+            <p>
+              The system replaces raw pixels with landmarks and frames the task as sequence-to-sequence prediction. MediaPipe provides 3D keypoints per frame. A Transformer captures temporal context and outputs letters A–Z plus an end token. The pipeline includes careful feature selection and normalization for stable learning.
+            </p>
+            <div class="chips">
+              <span class="chip">Sequence-to-sequence</span>
+              <span class="chip">On-device landmarks</span>
+              <span class="chip">Context-aware decoding</span>
+            </div>
+          </div>
+
+          <div class="content-section" id="data">
+            <div class="section-label"><span class="line"></span><span class="text">03</span></div>
+            <h2>Data &amp; feature spec</h2>
+            <h3>Dataset</h3>
+            <p>Google American Sign Language Fingerspelling dataset with precomputed MediaPipe landmarks. Examples are landmark sequences paired with target words.</p>
+            <h3>Feature selection (F = 144 per frame)</h3>
+            <ul>
+              <li>Pose joints: six upper body joints (11, 12, 13, 14, 15, 16)</li>
+              <li>Left hand: 21 landmarks (0–20)</li>
+              <li>Right hand: 21 landmarks (0–20)</li>
+              <li>Ordering per frame: pose → left hand → right hand. Each landmark: x, y, z → 48 triplets × 3 = 144 values</li>
+            </ul>
+          </div>
+
+          <div class="content-section" id="normalization">
+            <div class="section-label"><span class="line"></span><span class="text">04</span></div>
+            <h2>Normalization &amp; serialization</h2>
+            <ul>
+              <li><strong>Center:</strong> mid-shoulders if pose present, else mid-wrists.</li>
+              <li><strong>Scale:</strong> shoulder distance if pose present, else wrist distance.</li>
+              <li><strong>Sanitize:</strong> fill short gaps by linear then forward/backward fill. Replace NaN and Inf with zeros. Clamp to safe numeric range. Cast to float32.</li>
+              <li><strong>Storage:</strong> fast binary arrays with sequence masks so attention ignores padding.</li>
+            </ul>
+          </div>
+
+          <div class="content-section" id="architecture">
+            <div class="section-label"><span class="line"></span><span class="text">05</span></div>
+            <h2>Model architecture</h2>
+            <h3>Encoder &amp; decoder</h3>
+            <p>The encoder ingests the landmark sequence and builds contextual representations with multi-head self-attention and position-wise feed-forward layers. The decoder generates characters step-by-step using masked self-attention and cross-attention over encoder outputs.</p>
+            <h3>Practical size</h3>
+            <p>~4–6 layers on both encoder and decoder, ~8 heads, model width ≈ 256–512. Dropout after attention and feed-forward; residual connections and layer normalization follow standard Transformer design.</p>
+            <table>
+              <thead><tr><th>Component</th><th>Choice</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Input</td><td>F = 144 per frame</td><td>Pose 11–16, both hands 0–20</td></tr>
+                <tr><td>Encoder</td><td>Self-attention</td><td>Sinusoidal positional signals</td></tr>
+                <tr><td>Decoder</td><td>Masked self-attn + cross-attn</td><td>Greedy decode</td></tr>
+                <tr><td>Width</td><td>≈ 256–512</td><td>Dropout, residual, layer norm</td></tr>
+                <tr><td>Output</td><td>Letters A–Z + EOS</td><td>Softmax over characters</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="content-section" id="training">
+            <div class="section-label"><span class="line"></span><span class="text">06</span></div>
+            <h2>Training setup</h2>
+            <ul>
+              <li>Loss: sequence cross-entropy with teacher forcing.</li>
+              <li>Optimization: Adam with warmup then decay.</li>
+              <li>Batching: bucket by length, pad, and mask attention on padded positions.</li>
+              <li>Validation: track CER and select checkpoint with lowest validation CER.</li>
+            </ul>
+          </div>
+
+          <div class="content-section" id="metric">
+            <div class="section-label"><span class="line"></span><span class="text">07</span></div>
+            <h2>Metric</h2>
+            <p><strong>Character Error Rate (CER)</strong> measures character-level edits relative to reference length. Primary metric and basis for model selection.</p>
+          </div>
+
+          <div class="content-section" id="results">
+            <div class="section-label"><span class="line"></span><span class="text">08</span></div>
+            <h2>Results</h2>
+            <table>
+              <thead><tr><th>Metric</th><th>Value</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>CER on validation</td><td>≈ 0.36</td><td>From the project repository</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">
+              Common confusions: I vs J, M vs N, U vs V. Double letters may need a brief pause for clear separation.
+            </div>
+          </div>
+
+          <div class="content-section" id="limits">
+            <div class="section-label"><span class="line"></span><span class="text">09</span></div>
+            <h2>Limits &amp; next steps</h2>
+            <ul>
+              <li>Scope is fingerspelling letters only, not the full sign lexicon.</li>
+              <li>Very fast signing can cause dropped or merged letters.</li>
+              <li>Lighting, occlusion, or partial hands can degrade landmarks.</li>
+            </ul>
+            <p>Next steps: light personalization with a few user examples, optional beam search for long words, mobile deployment with quantization.</p>
+          </div>
+
+          <div class="content-section" id="faq">
+            <div class="section-label"><span class="line"></span><span class="text">FAQ</span></div>
+            <h2>FAQ</h2>
+            <h3>Why landmarks instead of pixels?</h3>
+            <p>Landmarks expose the essential signal — hand motion. They reduce input size and speed up training while improving robustness across camera setups.</p>
+            <h3>Why a Transformer for letters?</h3>
+            <p>It models temporal context so the system can disambiguate similar handshapes by using motion before and after each frame.</p>
+            <h3>How is the final checkpoint chosen?</h3>
+            <p>By the lowest validation character error rate on a held-out split.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
