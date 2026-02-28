@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cyber-teal: #00F0FF;
+  --cyber-navy: #050A18;
+  --cyber-navy-light: #0A1628;
+  --cyber-navy-mid: #0D1F3C;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles this */
+}
+
+body {
+  background-color: var(--cyber-navy);
+  color: #e2e8f0;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  overflow-x: hidden;
+}
+
+/* Hide default cursor everywhere */
+*, *::before, *::after {
+  cursor: none !important;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 240, 255, 0.2);
+  color: #00F0FF;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cyber-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.3);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.6);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(10, 22, 40, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+}
+
+/* Neon text glow */
+.neon-text {
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.4);
+}
+
+/* Cyber grid background */
+.cyber-grid {
+  background-image:
+    linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #00F0FF 0%, #0066FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section container */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Timeline line */
+.timeline-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+}
+
+/* Input focus glow */
+.input-cyber:focus {
+  outline: none;
+  border-color: var(--cyber-teal);
+  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.15), 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+/* Card hover */
+.project-card {
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Skill ring animation */
+@keyframes ring-fill {
+  from { stroke-dashoffset: var(--circumference); }
+  to { stroke-dashoffset: var(--offset); }
+}
+
+.skill-ring {
+  animation: ring-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
