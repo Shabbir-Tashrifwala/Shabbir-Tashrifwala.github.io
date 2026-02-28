@@ -3,71 +3,51 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const milestones = [
   {
-    year: "2024–2026",
-    title: "St. Mary's ISC, Mumbai",
-    subtitle: "Grade 11–12 | Science Stream",
+    year: "2023",
+    title: "Grade 10 — ICSE",
+    subtitle: "St. Mary's School, Mumbai",
     type: "education",
-    details: ["Grade 10: 92.8%", "ISC (Grade 12) in progress"],
+    details: [
+      "Completed Grade 10 under the ICSE board",
+      "St. Mary's School, Mumbai",
+    ],
     icon: "▣",
   },
   {
-    year: "2025",
-    title: "Indian National AI Olympiad (IIIT-Hyderabad)",
-    subtitle: "INAIO — Top 10 in India",
-    type: "award",
+    year: "2024 – 2026",
+    title: "Higher Secondary — ISC (Grades 11–12)",
+    subtitle: "St. Mary's School, Mumbai",
+    type: "education",
     details: [
-      "Second Runner-up, INAIO",
-      "Selected for IOAI Training Camp (Top 22 in India)",
+      "Science stream (ISC board)",
+      "St. Mary's School, Mumbai",
+    ],
+    icon: "▣",
+  },
+  {
+    year: "Apr – Sep 2025",
+    title: "Software Development Intern",
+    subtitle: "Data Science & ML · AppPerfect Corporation",
+    type: "work",
+    details: [
+      "Data Science & Machine Learning focus",
+      "AppPerfect Corporation",
     ],
     icon: "◈",
   },
   {
-    year: "2024",
-    title: "EUMIND International Exchange",
-    subtitle: "Team Leader — Best Article Award",
-    type: "leadership",
+    year: "May 2025",
+    title: "IOAI Training Camp",
+    subtitle: "International Olympiad of AI — Top 22 in India",
+    type: "award",
     details: [
-      "Led winning team for Best Article Award",
-      "International collaborative project",
-    ],
-    icon: "◉",
-  },
-  {
-    year: "2023",
-    title: "School Leader",
-    subtitle: "Student Body Representative",
-    type: "leadership",
-    details: [
-      "Appointed as representative of the student body",
-      "Event Head: Immaculata — Mumbai's largest interschool cultural festival",
-    ],
-    icon: "◎",
-  },
-  {
-    year: "2023",
-    title: "International Karate Tournament",
-    subtitle: "Philippines — National Representative",
-    type: "sports",
-    details: [
-      "Represented India internationally",
-      "Silver Medal — State-level Karate Tournament",
-    ],
-    icon: "◇",
-  },
-  {
-    year: "Ongoing",
-    title: "INAIO Committee & ACM IKDD",
-    subtitle: "Vice President, ACM IKDD | INAIO Committee Member",
-    type: "role",
-    details: [
-      "Member, INAIO Committee",
-      "Vice President, ACM IKDD",
+      "Selected among Top 22 students in India",
+      "International Olympiad of Artificial Intelligence",
     ],
     icon: "◆",
   },
@@ -75,14 +55,11 @@ const milestones = [
 
 const typeColors: Record<string, string> = {
   education: "#00F0FF",
+  work: "#a78bfa",
   award: "#FFD700",
-  leadership: "#00F0FF",
-  sports: "#00F0FF",
-  role: "#00F0FF",
 };
 
 export default function Timeline() {
-  const svgRef = useRef<SVGSVGElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const lineRef = useRef<SVGLineElement>(null);
 
@@ -90,7 +67,6 @@ export default function Timeline() {
     const milestoneEls = document.querySelectorAll(".timeline-milestone");
     const line = lineRef.current;
 
-    // Animate SVG line drawing on scroll
     if (line) {
       const totalLen = 1000;
       gsap.set(line, { strokeDasharray: totalLen, strokeDashoffset: totalLen });
@@ -106,7 +82,6 @@ export default function Timeline() {
       });
     }
 
-    // Illuminate milestones as they enter viewport center
     milestoneEls.forEach((el) => {
       gsap.fromTo(
         el,
@@ -124,7 +99,6 @@ export default function Timeline() {
         }
       );
 
-      // Dot pulse
       const dot = el.querySelector(".milestone-dot");
       if (dot) {
         gsap.fromTo(
@@ -174,7 +148,6 @@ export default function Timeline() {
         <div className="relative">
           {/* SVG animated line */}
           <svg
-            ref={svgRef}
             className="absolute left-[11px] top-0 h-full w-px md:left-1/2 pointer-events-none"
             style={{ overflow: "visible" }}
           >
@@ -266,7 +239,7 @@ export default function Timeline() {
                     </div>
                   </div>
 
-                  {/* Spacer for alternating layout */}
+                  {/* Spacer */}
                   <div className="hidden md:block flex-1" />
                 </div>
               );
