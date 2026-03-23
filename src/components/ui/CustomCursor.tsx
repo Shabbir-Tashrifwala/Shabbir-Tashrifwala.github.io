@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
@@ -9,11 +9,9 @@ export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Dot follows cursor directly
   const dotX = useSpring(cursorX, { stiffness: 2000, damping: 80 });
   const dotY = useSpring(cursorY, { stiffness: 2000, damping: 80 });
 
-  // Ring follows with delay
   const ringX = useSpring(cursorX, { stiffness: 200, damping: 30 });
   const ringY = useSpring(cursorY, { stiffness: 200, damping: 30 });
 
@@ -64,8 +62,8 @@ export default function CustomCursor() {
         transition={{ duration: 0.15 }}
       >
         <div
-          className="w-2 h-2 rounded-full bg-cyber-teal"
-          style={{ boxShadow: "0 0 6px rgba(0,240,255,0.9)" }}
+          className="w-2 h-2 rounded-full"
+          style={{ backgroundColor: "var(--accent)" }}
         />
       </motion.div>
 
@@ -80,8 +78,8 @@ export default function CustomCursor() {
         transition={{ duration: 0.2 }}
       >
         <div
-          className="w-8 h-8 rounded-full border border-cyber-teal/50"
-          style={{ boxShadow: "0 0 12px rgba(0,240,255,0.2)" }}
+          className="w-8 h-8 rounded-full"
+          style={{ border: "1px solid var(--text-tertiary)", opacity: 0.5 }}
         />
       </motion.div>
     </>

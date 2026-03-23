@@ -13,54 +13,50 @@
   <title>Transformer-Based ASL Fingerspelling to Text — Shabbir Tashrifwala</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Real-time ASL fingerspelling to text using MediaPipe landmarks and a Transformer encoder-decoder. CER ≈ 0.36 on validation." />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --navy:        #050A18;
-      --navy-light:  #0A1628;
-      --navy-mid:    #0D1F3C;
-      --teal:        #00F0FF;
-      --teal-dim:    rgba(0,240,255,0.15);
-      --teal-faint:  rgba(0,240,255,0.06);
-      --ink:         #f1f5f9;
-      --muted:       #94a3b8;
-      --border:      rgba(0,240,255,0.1);
-      --border-h:    rgba(0,240,255,0.3);
-      --glass:       rgba(10,22,40,0.7);
-      --mono:        "JetBrains Mono", monospace;
-      --sans:        "Inter", system-ui, sans-serif;
+      --bg-primary: #FAF7F2;
+      --bg-secondary: #F0EBE3;
+      --bg-tertiary: #E8E2D9;
+      --text-primary: #1A1A1A;
+      --text-secondary: #4A4A4A;
+      --text-tertiary: #8A8578;
+      --accent: #C8553D;
+      --accent-hover: #A94432;
+      --accent-soft: rgba(200,85,61,0.08);
+      --border: #E0DAD0;
+      --border-light: #EDE8E0;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", system-ui, sans-serif;
+      --mono: "JetBrains Mono", monospace;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--navy);
-      color: var(--ink);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
       font-family: var(--sans);
-      line-height: 1.7;
+      font-size: 17px;
+      line-height: 1.65;
       -webkit-font-smoothing: antialiased;
-      background-image:
-        radial-gradient(at 0% 0%, rgba(0,240,255,0.04) 0, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(0,240,255,0.03) 0, transparent 50%);
-      background-attachment: fixed;
     }
-    body::before {
-      content: "";
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image:
-        linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.6;
-    }
-    a { color: var(--teal); text-decoration: none; transition: opacity .2s; }
-    a:hover { opacity: .75; }
+    ::selection { background: var(--accent); color: #fff; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+    a { color: var(--accent); text-decoration: none; transition: color .2s; }
+    a:hover { color: var(--accent-hover); }
+
     .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
     header {
       position: sticky; top: 0; z-index: 50;
-      backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(5,10,24,0.85);
-      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: rgba(250,247,242,0.9);
+      border-bottom: 1px solid var(--border-light);
     }
     .header-inner {
       max-width: 1100px; margin: 0 auto; padding: 14px 24px;
@@ -68,109 +64,108 @@
     }
     .brand { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
     .brand-logo {
-      font-family: var(--mono); font-size: 13px; font-weight: 700;
-      color: var(--teal); letter-spacing: .2em; text-transform: uppercase;
-      text-decoration: none;
-      text-shadow: 0 0 12px rgba(0,240,255,0.6);
-      flex-shrink: 0;
+      font-family: var(--serif); font-size: 18px; font-weight: 700;
+      color: var(--text-primary); text-decoration: none; flex-shrink: 0;
     }
     .brand-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
-    .brand h1 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand h1 { font-family: var(--sans); font-size: 15px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .header-actions { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
 
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 8px 16px; border-radius: 2px; font-family: var(--mono);
-      font-size: 11px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+      padding: 8px 16px; border-radius: 6px; font-family: var(--sans);
+      font-size: 13px; font-weight: 500;
       text-decoration: none; border: 1px solid;
-      transition: all .25s; cursor: pointer;
+      transition: all .2s; cursor: pointer;
     }
-    .btn-ghost { border-color: var(--border); color: var(--muted); background: transparent; }
-    .btn-ghost:hover {
-      border-color: var(--teal); color: var(--teal); background: var(--teal-faint);
-      box-shadow: 0 0 16px rgba(0,240,255,0.12); opacity: 1;
-    }
+    .btn-ghost { border-color: var(--accent); color: var(--accent); background: transparent; }
+    .btn-ghost:hover { background: var(--accent); color: #fff; }
 
     main { padding: 32px 0 64px; }
 
     .synopsis-card {
-      background: var(--glass); border: 1px solid var(--border);
-      backdrop-filter: blur(12px); border-radius: 2px;
-      padding: 28px; margin-bottom: 24px;
+      background: var(--bg-secondary); border: 1px solid var(--border-light);
+      border-radius: 12px; padding: 32px; margin-bottom: 24px;
       transition: border-color .3s;
     }
-    .synopsis-card:hover { border-color: var(--border-h); }
+    .synopsis-card:hover { border-color: var(--border); }
 
     .section-label { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .section-label span.line { height: 1px; width: 32px; background: rgba(0,240,255,0.4); }
-    .section-label span.text { font-family: var(--mono); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--teal); }
+    .section-label span.line { height: 2px; width: 40px; background: var(--accent); }
+    .section-label span.text { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--text-tertiary); }
 
-    h2 { font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 12px; }
-    h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin: 20px 0 8px; }
-    p  { color: var(--muted); margin-bottom: 12px; font-size: 15px; }
-    ul, ol { padding-left: 20px; }
-    li { color: var(--muted); margin-bottom: 6px; font-size: 15px; }
-    li strong { color: var(--ink); }
+    h2 { font-family: var(--serif); font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; }
+    .content-section h2::after { content: ""; display: block; width: 40px; height: 2px; background: var(--accent); margin-top: 12px; }
+    h3 { font-family: var(--sans); font-size: 16px; font-weight: 600; color: var(--text-primary); margin: 20px 0 8px; }
+    p { color: var(--text-secondary); margin-bottom: 12px; font-size: 0.95rem; line-height: 1.7; }
+    ul { list-style: none; padding-left: 0; }
+    ul li { padding-left: 16px; position: relative; color: var(--text-secondary); margin-bottom: 6px; font-size: 0.9rem; }
+    ul li::before { content: ""; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+    ol { padding-left: 20px; }
+    li strong { color: var(--text-primary); font-weight: 600; }
 
     .grid { display: grid; gap: 20px; }
     @media(min-width: 980px) { .grid { grid-template-columns: 260px 1fr; } }
 
     nav.toc {
       position: sticky; top: 72px; align-self: start;
-      background: var(--glass); border: 1px solid var(--border);
-      backdrop-filter: blur(12px); border-radius: 2px; padding: 16px;
+      background: transparent; border: 1px solid var(--border-light);
+      border-radius: 8px; padding: 16px;
     }
     .toc-title {
-      font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
-      text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
-      padding-bottom: 10px; border-bottom: 1px solid var(--border);
+      font-family: var(--sans); font-size: 13px; font-weight: 500;
+      color: var(--text-tertiary); margin-bottom: 12px;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border-light);
     }
     nav.toc a {
-      display: block; color: var(--muted); padding: 7px 10px; border-radius: 2px;
-      font-size: 13px; border: 1px solid transparent; transition: all .2s;
-      text-decoration: none;
+      display: block; color: var(--text-tertiary); padding: 7px 10px; border-radius: 4px;
+      font-family: var(--sans); font-size: 0.85rem; transition: all .2s;
+      text-decoration: none; border-left: 2px solid transparent;
     }
-    nav.toc a:hover { background: var(--teal-faint); border-color: var(--border); color: var(--ink); opacity: 1; }
+    nav.toc a:hover { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
 
     .content-section {
-      background: var(--glass); border: 1px solid var(--border);
-      backdrop-filter: blur(12px); border-radius: 2px;
-      padding: 24px; margin-bottom: 16px;
-      transition: border-color .3s;
+      background: transparent; border: none; border-bottom: 1px solid var(--border-light);
+      border-radius: 0; padding: 0 0 24px 0; margin-bottom: 24px;
+      transition: none;
     }
-    .content-section:hover { border-color: var(--border-h); }
+    .content-section:hover { border-color: var(--border-light); }
+    .content-section:last-child { border-bottom: none; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
     .chip {
-      font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 2px;
-      background: var(--teal-faint); border: 1px solid rgba(0,240,255,0.15);
-      color: rgba(0,240,255,0.7); letter-spacing: .05em;
+      font-family: var(--mono); font-size: 0.75rem; font-weight: 500; padding: 4px 10px; border-radius: 4px;
+      background: var(--accent-soft); color: var(--accent);
     }
+
     .callout {
-      padding: 14px 16px; border-left: 3px solid var(--teal);
-      background: var(--teal-dim); border-radius: 0 2px 2px 0;
-      margin: 14px 0; color: var(--ink); font-size: 14px;
+      padding: 14px 16px; border-left: 3px solid var(--accent);
+      background: var(--accent-soft); border-radius: 0 8px 8px 0;
+      margin: 14px 0; color: var(--text-secondary); font-size: 14px;
     }
+
     table {
       width: 100%; border-collapse: separate; border-spacing: 0;
-      border-radius: 2px; margin: 14px 0; border: 1px solid var(--border); overflow: hidden;
+      border-radius: 8px; margin: 14px 0; border: 1px solid var(--border); overflow: hidden;
     }
     thead th {
-      background: rgba(0,240,255,0.04); color: var(--teal); font-family: var(--mono);
-      font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-      text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary); color: var(--text-primary); font-family: var(--sans);
+      font-size: 0.85rem; font-weight: 600;
+      text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border);
     }
-    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--muted); font-size: 14px; }
+    tbody td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); color: var(--text-secondary); font-size: 0.85rem; }
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr:hover td { background: var(--teal-faint); }
+    tbody tr:nth-child(even) td { background: rgba(240,235,227,0.5); }
+    tbody tr:hover td { background: var(--bg-tertiary); }
 
-    .corner-tl { position: fixed; top: 80px; left: 16px; width: 24px; height: 24px; border-top: 1px solid rgba(0,240,255,0.2); border-left: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
-    .corner-br { position: fixed; bottom: 16px; right: 16px; width: 24px; height: 24px; border-bottom: 1px solid rgba(0,240,255,0.2); border-right: 1px solid rgba(0,240,255,0.2); pointer-events: none; z-index: 2; }
+    @media(max-width: 767px) {
+      h2 { font-size: 20px; }
+      .synopsis-card { padding: 20px; }
+      .brand h1 { font-size: 13px; }
+    }
   </style>
 </head>
 <body>
-  <div class="corner-tl"></div>
-  <div class="corner-br"></div>
 
   <header>
     <div class="header-inner">
