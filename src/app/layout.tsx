@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import CustomCursor from "@/components/ui/CustomCursor";
 import Navbar from "@/components/ui/Navbar";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
@@ -39,7 +38,6 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/assets/favicon.png" />
       </head>
       <body className="antialiased">
-        <CustomCursor />
         <SmoothScroll>
           <Navbar />
           <main>{children}</main>

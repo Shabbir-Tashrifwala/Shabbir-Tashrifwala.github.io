@@ -1,288 +1,151 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
-type State = "idle" | "loading" | "success" | "error";
-
-function FloatingInput({
-  label,
-  type = "text",
-  name,
-  required,
-  multiline,
-}: {
-  label: string;
-  type?: string;
-  name: string;
-  required?: boolean;
-  multiline?: boolean;
-}) {
-  const [focused, setFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-
-  const sharedProps = {
-    name,
-    required,
-    onFocus: () => setFocused(true),
-    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setFocused(false);
-      setHasValue(e.target.value.length > 0);
-    },
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setHasValue(e.target.value.length > 0),
-    className: `
-      w-full bg-transparent border-b font-mono text-sm text-white pt-6 pb-2 px-0
-      outline-none transition-all duration-300
-      ${focused
-        ? "border-cyber-teal"
-        : "border-slate-700 hover:border-slate-500"
-      }
-    `,
-    style: focused
-      ? { boxShadow: "0 2px 0 0 rgba(0,240,255,0.4)" }
-      : undefined,
-  };
-
-  return (
-    <div className="relative group">
-      {multiline ? (
-        <textarea
-          {...sharedProps}
-          rows={4}
-          className={sharedProps.className + " resize-none"}
-          style={sharedProps.style}
-        />
-      ) : (
-        <input type={type} {...sharedProps} />
-      )}
-
-      {/* Floating label */}
-      <label
-        className={`
-          absolute left-0 font-mono text-xs tracking-widest uppercase transition-all duration-200 pointer-events-none
-          ${focused || hasValue
-            ? "top-0 text-cyber-teal scale-90 origin-left"
-            : "top-6 text-slate-500"
-          }
-        `}
-      >
-        {label}
-      </label>
-
-      {/* Focus underline glow */}
-      <AnimatePresence>
-        {focused && (
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            exit={{ scaleX: 0 }}
-            className="absolute bottom-0 left-0 right-0 h-px bg-cyber-teal origin-left"
-            style={{ boxShadow: "0 0 8px rgba(0,240,255,0.6)" }}
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+import { motion } from "framer-motion";
 
 export default function Contact() {
-  const [state, setState] = useState<State>("idle");
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setState("loading");
-
-    // Simulate send (replace with real form handler / Formspree)
-    await new Promise((res) => setTimeout(res, 1800));
-    setState("success");
-
-    setTimeout(() => {
-      setState("idle");
-      formRef.current?.reset();
-    }, 3000);
-  };
-
   return (
-    <section
-      id="contact"
-      className="relative py-32 bg-cyber-navy-light overflow-hidden"
-    >
-      <div className="absolute inset-0 cyber-grid opacity-10 pointer-events-none" />
-
-      {/* Glow blobs */}
-      <div
-        className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, rgba(0,240,255,0.04) 0%, transparent 70%)",
-        }}
-      />
-
-      <div className="section-container relative z-10">
+    <section id="contact" className="py-24 md:py-32 bg-[var(--bg-secondary)]">
+      <div className="section-container">
         <div className="max-w-2xl mx-auto">
           {/* Heading */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-16"
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="mb-12"
           >
-            <div className="flex items-center gap-4 mb-3">
-              <span className="h-px w-12 bg-cyber-teal/40" />
-              <span className="font-mono text-cyber-teal text-xs tracking-[0.3em] uppercase">
-                Let&apos;s Talk
-              </span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
-              Get In Touch<span className="text-cyber-teal">.</span>
+            <h2 className="font-serif text-4xl sm:text-5xl font-bold text-[var(--text-primary)] mb-4">
+              Get In Touch
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
               Whether it&apos;s a project collab, research opportunity, or you just want to nerd
               out about AI — reach out.
             </p>
           </motion.div>
 
-          {/* Contact links */}
+          {/* Email prominent */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-wrap gap-6 mb-12"
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="text-center mb-10"
           >
-            {[
-              { label: "Email", value: "shabbir@tashrifwala.com", href: "mailto:shabbir@tashrifwala.com" },
-              { label: "Phone", value: "+91-9137433985", href: "tel:+919137433985" },
-              { label: "Web", value: "tashrifwala.com", href: "https://www.tashrifwala.com" },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="group flex flex-col gap-1"
-              >
-                <span className="font-mono text-xs text-slate-500 tracking-widest uppercase">
-                  {item.label}
-                </span>
-                <span className="font-mono text-sm text-cyber-teal group-hover:underline underline-offset-4 decoration-cyber-teal/40">
-                  {item.value}
-                </span>
-              </a>
-            ))}
+            <a
+              href="mailto:shabbir@tashrifwala.com"
+              className="font-sans font-medium text-lg text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors duration-200"
+              style={{ fontSize: "1.1rem" }}
+            >
+              shabbir@tashrifwala.com
+            </a>
           </motion.div>
 
-          {/* Form */}
-          <motion.form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 20 }}
+          {/* Contact links */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="space-y-8"
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+            className="flex flex-col items-center gap-4 mb-10"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <FloatingInput label="Name" name="name" required />
-              <FloatingInput label="Email" type="email" name="email" required />
-            </div>
-            <FloatingInput label="Subject" name="subject" />
-            <FloatingInput label="Message" name="message" required multiline />
+            {/* Email row */}
+            <a
+              href="mailto:shabbir@tashrifwala.com"
+              className="flex items-center gap-3 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200 text-sm"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M22 7l-10 7L2 7"/>
+              </svg>
+              shabbir@tashrifwala.com
+            </a>
 
-            {/* Submit button */}
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={state === "loading" || state === "success"}
-                className="relative w-full sm:w-auto px-10 py-3 font-mono text-sm tracking-widest uppercase font-bold overflow-hidden group transition-all duration-300"
-                style={{
-                  background: state === "success" ? "rgba(0,240,255,0.1)" : "transparent",
-                  border: "1px solid rgba(0,240,255,0.5)",
-                  color: "#00F0FF",
-                  boxShadow: state !== "idle" ? "0 0 20px rgba(0,240,255,0.2)" : "none",
-                }}
-              >
-                {/* Hover fill */}
-                <span
-                  className="absolute inset-0 bg-cyber-teal translate-y-full group-hover:translate-y-0 transition-transform duration-300 group-disabled:hidden"
-                  aria-hidden
-                />
+            {/* Website row */}
+            <a
+              href="https://www.tashrifwala.com"
+              className="flex items-center gap-3 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200 text-sm"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+              </svg>
+              tashrifwala.com
+            </a>
+          </motion.div>
 
-                <span className="relative z-10 group-hover:text-cyber-navy transition-colors duration-300 flex items-center justify-center gap-3">
-                  <AnimatePresence mode="wait">
-                    {state === "idle" && (
-                      <motion.span
-                        key="idle"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        Send Message
-                      </motion.span>
-                    )}
-                    {state === "loading" && (
-                      <motion.span
-                        key="loading"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-2"
-                      >
-                        <svg
-                          className="animate-spin h-4 w-4"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l-3 3 3 3v-4a8 8 0 01-8-8z"
-                          />
-                        </svg>
-                        Transmitting...
-                      </motion.span>
-                    )}
-                    {state === "success" && (
-                      <motion.span
-                        key="success"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-2"
-                      >
-                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                        Message Sent
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </span>
-              </button>
-            </div>
-          </motion.form>
-
-          {/* Footer note */}
+          {/* Social icons */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="mt-16 pt-8 border-t border-cyber-teal/10 text-center"
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex justify-center gap-6 mb-16"
           >
-            <p className="font-mono text-xs text-slate-600 tracking-widest">
-              Built with Next.js · Three.js · GSAP · Framer Motion
+            {/* GitHub */}
+            <a
+              href="https://github.com/Shabbir-Tashrifwala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-200"
+              aria-label="GitHub"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+
+            {/* LinkedIn */}
+            <a
+              href="https://linkedin.com/in/shabbir-tashrifwala"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-200"
+              aria-label="LinkedIn"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+          </motion.div>
+
+          {/* Footer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="pt-8 border-t border-[var(--border)] text-center flex items-center justify-center gap-4"
+          >
+            <p className="font-sans text-xs text-[var(--text-tertiary)]" style={{ fontSize: "0.85rem" }}>
+              &copy; {new Date().getFullYear()} Shabbir Tashrifwala
             </p>
-            <p className="font-mono text-xs text-slate-700 mt-1">
-              © {new Date().getFullYear()} Shabbir Tashrifwala
-            </p>
+            {/* Small social icons in footer */}
+            <div className="flex items-center gap-3">
+              <a
+                href="https://github.com/Shabbir-Tashrifwala"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-200"
+                aria-label="GitHub"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </a>
+              <a
+                href="https://linkedin.com/in/shabbir-tashrifwala"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--text-tertiary)] hover:text-[var(--accent)] transition-colors duration-200"
+                aria-label="LinkedIn"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+            </div>
           </motion.div>
         </div>
       </div>

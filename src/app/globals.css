@@ -1,14 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --cyber-teal: #00F0FF;
-  --cyber-navy: #050A18;
-  --cyber-navy-light: #0A1628;
-  --cyber-navy-mid: #0D1F3C;
+  --bg-primary: #FAF7F2;
+  --bg-secondary: #F0EBE3;
+  --bg-tertiary: #E8E2D9;
+  --text-primary: #1A1A1A;
+  --text-secondary: #4A4A4A;
+  --text-tertiary: #8A8578;
+  --accent: #C8553D;
+  --accent-hover: #A94432;
+  --accent-soft: rgba(200,85,61,0.08);
+  --border: #E0DAD0;
+  --border-light: #EDE8E0;
 }
 
 * {
@@ -20,100 +27,56 @@ html {
 }
 
 body {
-  background-color: var(--cyber-navy);
-  color: #e2e8f0;
-  font-family: 'Inter', sans-serif;
-  cursor: none;
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
   overflow-x: hidden;
 }
 
-/* Hide default cursor everywhere */
-*, *::before, *::after {
-  cursor: none !important;
+/* Subtle grain texture overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(0, 240, 255, 0.2);
-  color: #00F0FF;
+  background: var(--accent);
+  color: #fff;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--cyber-navy);
+  background: var(--bg-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 255, 0.3);
-  border-radius: 2px;
+  background: var(--border);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.6);
-}
-
-/* Glassmorphism utility */
-.glass {
-  background: rgba(10, 22, 40, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 240, 255, 0.12);
-}
-
-/* Neon text glow */
-.neon-text {
-  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.4);
-}
-
-/* Cyber grid background */
-.cyber-grid {
-  background-image:
-    linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #00F0FF 0%, #0066FF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: var(--text-tertiary);
 }
 
 /* Section container */
 .section-container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 2rem;
 }
 
-/* Timeline line */
-.timeline-line {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-}
-
-/* Input focus glow */
-.input-cyber:focus {
-  outline: none;
-  border-color: var(--cyber-teal);
-  box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.15), 0 0 20px rgba(0, 240, 255, 0.1);
-}
-
-/* Card hover */
-.project-card {
-  transform-style: preserve-3d;
-  transition: box-shadow 0.3s ease;
-}
-
-/* Skill ring animation */
-@keyframes ring-fill {
-  from { stroke-dashoffset: var(--circumference); }
-  to { stroke-dashoffset: var(--offset); }
-}
-
-.skill-ring {
-  animation: ring-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+/* All transitions */
+a, button {
+  transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
 }
