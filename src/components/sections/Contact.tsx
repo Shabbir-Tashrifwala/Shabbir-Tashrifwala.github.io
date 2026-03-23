@@ -1,8 +1,32 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, FormEvent } from "react";
 
 export default function Contact() {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+    const form = e.currentTarget;
+    try {
+      const res = await fetch("https://formspree.io/f/xkgqeoyz", {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        setStatus("sent");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
+
   return (
     <section id="contact" className="py-24 md:py-32 bg-[var(--bg-secondary)]">
       <div className="section-container">
@@ -24,22 +48,68 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          {/* Email prominent */}
-          <motion.div
+          {/* Contact Form */}
+          <motion.form
+            onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-            className="text-center mb-10"
+            className="mb-12 space-y-5"
           >
-            <a
-              href="mailto:shabbir@tashrifwala.com"
-              className="font-sans font-medium text-lg text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors duration-200"
-              style={{ fontSize: "1.1rem" }}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="Your name"
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-shadow duration-200"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-shadow duration-200"
+              />
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows={5}
+                placeholder="Write your message..."
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-shadow duration-200 resize-vertical"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="px-6 py-2.5 rounded-lg bg-[var(--accent)] text-white text-sm font-medium hover:bg-[var(--accent-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 transition-colors duration-200 disabled:opacity-60"
             >
-              shabbir@tashrifwala.com
-            </a>
-          </motion.div>
+              {status === "sending" ? "Sending..." : "Send Message"}
+            </button>
+            {status === "sent" && (
+              <p className="text-sm text-green-600">Message sent! I&apos;ll get back to you soon.</p>
+            )}
+            {status === "error" && (
+              <p className="text-sm text-red-600">Something went wrong. Please try again.</p>
+            )}
+          </motion.form>
 
           {/* Contact links */}
           <motion.div
@@ -51,14 +121,14 @@ export default function Contact() {
           >
             {/* Email row */}
             <a
-              href="mailto:shabbir@tashrifwala.com"
+              href="mailto:stashrif786@gmail.com"
               className="flex items-center gap-3 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors duration-200 text-sm"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
                 <path d="M22 7l-10 7L2 7"/>
               </svg>
-              shabbir@tashrifwala.com
+              stashrif786@gmail.com
             </a>
 
             {/* Website row */}
